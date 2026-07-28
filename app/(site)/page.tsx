@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import SubscribeForm from "@/components/SubscribeForm";
 import { getPosts, getSermons, getSite } from "@/lib/content";
 
 export default async function HomePage() {
@@ -75,14 +76,12 @@ export default async function HomePage() {
                 {latestSermon.duration && <> · {latestSermon.duration}</>}
               </p>
               <div className="mt-5 flex flex-wrap gap-3">
-                {(latestSermon.audioFile || latestSermon.audioUrl) && (
-                  <a
-                    href={latestSermon.audioFile ?? latestSermon.audioUrl ?? "#"}
-                    className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-500"
-                  >
-                    Listen Now
-                  </a>
-                )}
+                <Link
+                  href={`/sermons/${latestSermon.slug}`}
+                  className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-500"
+                >
+                  Listen Now
+                </Link>
                 <Link
                   href="/sermons"
                   className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:border-slate-500"
@@ -155,13 +154,8 @@ export default async function HomePage() {
       <section className="reveal-pending">
         <div className="mx-auto max-w-3xl px-4 py-16 text-center">
           <h2 className="text-3xl">Never Miss an Update</h2>
-          <p className="mt-4 text-slate-600">{site.subscribeBlurb}</p>
-          <a
-            href={`mailto:${site.email}?subject=${encodeURIComponent("Subscribe me to weekly updates")}`}
-            className="mt-6 inline-block rounded-lg bg-brand-600 px-6 py-3 font-semibold text-white hover:bg-brand-500"
-          >
-            Subscribe by Email
-          </a>
+          <p className="mb-6 mt-4 text-slate-600">{site.subscribeBlurb}</p>
+          <SubscribeForm fallbackEmail={site.email} />
         </div>
       </section>
     </main>

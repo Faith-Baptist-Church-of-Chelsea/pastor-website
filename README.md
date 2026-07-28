@@ -100,13 +100,53 @@ Pieces involved (all set up July 2026):
   the repo (Settings → Collaborators). Remove them there to revoke.
 - Local editing still works exactly the same at localhost:3000/keystatic.
 
-## Subscribe / contact — how it works
+## The email list — how it works
 
-There is deliberately no backend yet. "Subscribe" and "Contact" buttons open
-the visitor's own email app addressed to the pastor (address lives in
-`content/site.json`), pre-filled with a subject line. Pastor Summers keeps his
-update list wherever he keeps it today (his email). If a real mailing list is
-ever wanted, Resend + a small form is the church-site pattern to copy.
+Visitors subscribe through the form on the homepage and /contact. Under the
+hood (July 2026 build):
+
+- **Subscribers** live in a Resend **Audience** (resend.com → Audiences) —
+  no database. `/api/subscribe` adds them (honeypot + rate limit for spam).
+- **Announcements**: a Vercel Cron hits `/api/announce` daily at 13:00 UTC
+  (9 AM ET). It looks for sermons/posts/devotions dated in the last 14 days
+  that haven't been emailed about, and sends ONE digest broadcast to the
+  audience. "Already announced" is remembered in the names of past
+  broadcasts, so nothing is ever sent twice. Unsubscribe links are handled
+  by Resend automatically.
+- So the pastor's whole workflow is: add the sermon in /keystatic → the
+  site deploys → subscribers get the email the next morning. Nothing to
+  remember.
+- Env vars: `RESEND_API_KEY` (full access), `RESEND_AUDIENCE_ID`,
+  `CRON_SECRET`, and optionally `RESEND_FROM` (defaults to Resend's shared
+  test sender `onboarding@resend.dev` until pastoradamsummers.com is
+  verified as a sending domain in Resend — do that at cutover so emails
+  land reliably).
+- If the Resend vars are missing, the form degrades gracefully to a
+  "email the pastor instead" link. The Subscribe header button is still a
+  mailto link on purpose (works everywhere, even in RSS readers).
+
+## The sermon podcast
+
+`/podcast.xml` is a full podcast RSS feed generated from every sermon that
+has an uploaded recording. **One-time step still to do:** submit that URL at
+podcastsconnect.apple.com and podcasters.spotify.com — after approval, new
+sermons appear in people's podcast apps automatically. Cover art is
+`public/images/podcast-cover.jpg`.
+
+## Little touches worth knowing about
+
+- Every sermon and blog post has its own share image (dark + gold card) —
+  pasting a link into Facebook/iMessage shows a proper preview.
+- Bare scripture references in any text ("Ephesians 5:19") automatically
+  become KJV BibleGateway links.
+- The sermons page has Bible-book filter chips, and sermon/post pages
+  cross-link related preaching and writing by book.
+- Devotions can be written (just type in the "Devotion text" field), video
+  (paste a YouTube ID), or both. The Devotions page stays out of the menu
+  until the first one exists.
+- Vercel Web Analytics is wired in (`@vercel/analytics`) — enable it once
+  in the Vercel dashboard → project → Analytics, then traffic shows up
+  there with no cookies/banners needed.
 
 ## Deploying
 

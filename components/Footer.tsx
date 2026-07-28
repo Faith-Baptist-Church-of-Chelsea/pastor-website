@@ -7,6 +7,7 @@ const quickLinks = [
   { label: "About", href: "/about" },
   { label: "Pastor's Desk", href: "/pastors-desk" },
   { label: "Sermons", href: "/sermons" },
+  { label: "Sermon Podcast", href: "/podcast.xml" },
   { label: "Family Music", href: "/music" },
   { label: "Contact", href: "/contact" },
 ];

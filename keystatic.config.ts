@@ -165,10 +165,14 @@ export default config({
         title: fields.slug({ name: { label: "Devotion title" } }),
         date: fields.date({ label: "Date" }),
         youtube: fields.text({
-          label: "YouTube video ID",
-          description: "Just the ID — the part after \"watch?v=\" in the YouTube link",
+          label: "YouTube video ID (optional)",
+          description:
+            "For video devotions: just the ID — the part after \"watch?v=\" in the YouTube link. Leave empty for a written devotion.",
         }),
-        note: fields.mdx({ label: "Note (optional)" }),
+        note: fields.mdx({
+          label: "Devotion text",
+          description: "The devotion itself — a short written thought (or notes to go with the video)",
+        }),
       },
     }),
   },

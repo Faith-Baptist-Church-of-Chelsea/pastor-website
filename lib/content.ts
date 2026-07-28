@@ -3,6 +3,7 @@
 // admin panel enforces. Only import this from server components.
 import { createReader } from "@keystatic/core/reader";
 import keystaticConfig from "@/keystatic.config";
+import { extractBooks } from "@/lib/bible";
 
 export const reader = createReader(process.cwd(), keystaticConfig);
 
@@ -37,6 +38,37 @@ export async function getSermon(slug: string) {
     videoUrl: entry.videoUrl ?? null,
     description: mdxToParagraphs(await entry.description()),
   };
+}
+
+export type SermonFull = Awaited<ReturnType<typeof getSermonsFull>>[number];
+
+/**
+ * All sermons with descriptions resolved and Bible books extracted from
+ * the passage — powers the sermons index (filters) and related-content.
+ */
+export async function getSermonsFull() {
+  const sermons = await getSermons();
+  return Promise.all(
+    sermons.map(async (s) => {
+      const entry = await reader.collections.sermons.read(s.slug);
+      const description = entry
+        ? (await entry.description()).replace(/\{\/\*[\s\S]*?\*\/\}/g, "").trim()
+        : "";
+      return { ...s, description, books: extractBooks(s.passage) };
+    })
+  );
+}
+
+/** All posts with bodies resolved and Bible books extracted from the text. */
+export async function getPostsFull() {
+  const posts = await getPosts();
+  return Promise.all(
+    posts.map(async (p) => {
+      const entry = await reader.collections.posts.read(p.slug);
+      const body = entry ? await entry.body() : "";
+      return { ...p, books: extractBooks(`${p.title}\n${body}`) };
+    })
+  );
 }
 
 /** All blog posts, newest first (body not resolved — use getPost). */
@@ -113,20 +145,3 @@ function mdxToParagraphs(text: string): string[] {
     .filter(Boolean);
 }
 
-/**
- * SermonAudio sermon ID from a sermonaudio.com URL, for the embedded
- * player. e.g. "http://sermonaudio.com/sermon/825201629363286" → the ID.
- */
-export function sermonAudioId(url: string | null): string | null {
-  if (!url) return null;
-  const m = url.match(/sermonaudio\.com\/(?:sermon(?:info)?[/.=]|saplayer\/playpopup\.asp\?SID=)?(\d{8,})/i);
-  return m ? m[1] : null;
-}
-
-/** YouTube video ID from a full YouTube URL (or an ID passed straight through). */
-export function youtubeId(url: string | null): string | null {
-  if (!url) return null;
-  if (/^[A-Za-z0-9_-]{11}$/.test(url)) return url;
-  const m = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
-  return m ? m[1] : null;
-}

@@ -3,7 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import MarkdownBody from "@/components/MarkdownBody";
-import { getPost, getPosts } from "@/lib/content";
+import { getPost, getPosts, getSermonsFull } from "@/lib/content";
+import { extractBooks } from "@/lib/bible";
 
 export async function generateStaticParams() {
   const posts = await getPosts();
@@ -54,8 +55,39 @@ export default async function PostPage({
           height={150}
           className="mt-10 h-auto w-40"
         />
+        <RelatedSermons bodyText={`${post.title}\n${post.body}`} />
       </article>
     </main>
+  );
+}
+
+// Sermons preached from the books this post quotes.
+async function RelatedSermons({ bodyText }: { bodyText: string }) {
+  const books = extractBooks(bodyText);
+  if (books.length === 0) return null;
+  const sermons = (await getSermonsFull())
+    .filter((s) => s.books.some((b) => books.includes(b)))
+    .slice(0, 3);
+  if (sermons.length === 0) return null;
+  return (
+    <div className="mt-12 border-t border-slate-200 pt-8">
+      <h2 className="text-xl">Sermons on {books.slice(0, 3).join(", ")}</h2>
+      <ul className="mt-4 space-y-3">
+        {sermons.map((s) => (
+          <li key={s.slug}>
+            <Link
+              href={`/sermons/${s.slug}`}
+              className="hover-lift block rounded-lg border border-slate-200 bg-white p-4 shadow-sm"
+            >
+              <span className="font-semibold text-slate-900">{s.title}</span>
+              {s.passage && (
+                <span className="ml-2 text-sm text-slate-500">{s.passage}</span>
+              )}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageHero from "@/components/PageHero";
+import SubscribeForm from "@/components/SubscribeForm";
 import { getSite } from "@/lib/content";
 
 export const metadata: Metadata = {
@@ -32,13 +33,8 @@ export default async function ContactPage() {
 
           <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
             <h2 className="text-lg">Subscribe to Updates</h2>
-            <p className="mt-2 text-sm text-slate-600">{site.subscribeBlurb}</p>
-            <a
-              href={`mailto:${site.email}?subject=${encodeURIComponent("Subscribe me to weekly updates")}`}
-              className="mt-4 inline-block rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-500"
-            >
-              Subscribe by Email
-            </a>
+            <p className="mb-4 mt-2 text-sm text-slate-600">{site.subscribeBlurb}</p>
+            <SubscribeForm fallbackEmail={site.email} />
           </div>
 
           <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
