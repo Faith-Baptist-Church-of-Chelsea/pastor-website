@@ -81,6 +81,25 @@ from any browser, switch to GitHub storage mode: set
 at /keystatic. His edits become git commits, same as everything else. Ask
 Claude Code to do this when ready.
 
+## Editing from any browser (how Pastor Summers edits)
+
+Keystatic runs in **GitHub mode**: anyone whose GitHub account has access to
+the `stevenabi6912-prog/pastor-website` repo can open
+**`<the live site>/keystatic`** in any browser, log in with GitHub, and edit.
+Every save is a git commit to `main`, which redeploys the site automatically.
+
+Pieces involved (all set up July 2026):
+
+- GitHub App **pastor-website-keystatic**
+  (github.com/apps/pastor-website-keystatic) — created by the Keystatic
+  wizard; its keys live in `.env` locally and in Vercel env vars. If the
+  live-site login ever breaks, check that the app's callback URLs (GitHub →
+  Settings → Developer settings → GitHub Apps → pastor-website-keystatic)
+  include `https://<live domain>/api/keystatic/github/oauth/callback`.
+- To give someone edit access: add their GitHub account as a collaborator on
+  the repo (Settings → Collaborators). Remove them there to revoke.
+- Local editing still works exactly the same at localhost:3000/keystatic.
+
 ## Subscribe / contact — how it works
 
 There is deliberately no backend yet. "Subscribe" and "Contact" buttons open
@@ -89,15 +108,22 @@ the visitor's own email app addressed to the pastor (address lives in
 update list wherever he keeps it today (his email). If a real mailing list is
 ever wanted, Resend + a small form is the church-site pattern to copy.
 
-## Deploying (not yet set up)
+## Deploying
 
-1. Push this repo to GitHub.
-2. Import it in Vercel → every push to `main` deploys automatically.
-3. When ready to cut over: point pastoradamsummers.com's DNS at Vercel and
-   set `NEXT_PUBLIC_SITE_URL=https://pastoradamsummers.com`.
+- Repo: github.com/stevenabi6912-prog/pastor-website (private)
+- Vercel project: `pastor-website` (faith-baptist-church team)
+- Live at: https://pastor-website-nine.vercel.app
+- Every push to `main` deploys automatically (once the Vercel GitHub App has
+  been granted access to this repo — see below). Manual deploy: `vercel deploy --prod`.
 
 **To roll back a bad deploy:** Vercel dashboard → Deployments → find the last
 good one → "… → Promote to Production".
+
+**Domain cutover (still to do):** point pastoradamsummers.com's DNS at
+Vercel, add the domain in Vercel project settings, set
+`NEXT_PUBLIC_SITE_URL=https://pastoradamsummers.com`, and add
+`https://pastoradamsummers.com/api/keystatic/github/oauth/callback` to the
+pastor-website-keystatic GitHub App's callback URLs.
 
 ## Migration notes (July 2026)
 
