@@ -1,0 +1,166 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens — "Warm and Personal"
+ *
+ * The pastor's site is warmer and more bookish than the church site:
+ * deep slate/near-black sections with a warm gold accent, and a serif
+ * display face (Playfair) for headings — a study, not a stage.
+ *
+ * Accessibility note: brand-400 gold is for DARK backgrounds only.
+ * On white, use brand-700 for links/text (AA-safe); brand-600 works
+ * for buttons and large elements.
+ */
+@theme {
+  --color-brand-400: #e5b45b; /* warm gold — accents on dark */
+  --color-brand-500: #c99235; /* gold — large elements on dark */
+  --color-brand-600: #a16207; /* buttons on white, hover on dark */
+  --color-brand-700: #854d0e; /* AA-safe link/text gold-brown on white */
+  --color-paper: #faf7f2; /* warm off-white section background */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-playfair), Georgia, serif;
+}
+
+/*
+ * Display typography: page titles and section headings use the serif
+ * display face. Warm, literate, unhurried.
+ */
+h1,
+main h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.12;
+}
+
+body {
+  background: #ffffff;
+  color: var(--color-slate-800);
+  font-family: var(--font-sans);
+  /* Readers span every age — never below 16px. */
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+/* Visible focus for keyboard users, consistent everywhere. */
+:focus-visible {
+  outline: 3px solid var(--color-brand-500);
+  outline-offset: 2px;
+}
+
+/* Long-form prose (blog posts, about page, sermon descriptions). */
+.prose-body p {
+  margin-top: 1em;
+}
+.prose-body h2,
+.prose-body h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  margin-top: 1.6em;
+  line-height: 1.2;
+}
+.prose-body h2 {
+  font-size: 1.5rem;
+}
+.prose-body h3 {
+  font-size: 1.25rem;
+}
+.prose-body a {
+  color: var(--color-brand-700);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.prose-body a:hover {
+  color: var(--color-brand-600);
+}
+.prose-body blockquote {
+  border-left: 3px solid var(--color-brand-500);
+  padding-left: 1rem;
+  margin-top: 1em;
+  font-style: italic;
+  color: var(--color-slate-600);
+}
+.prose-body ul,
+.prose-body ol {
+  margin-top: 1em;
+  padding-left: 1.5rem;
+}
+.prose-body ul {
+  list-style: disc;
+}
+.prose-body ol {
+  list-style: decimal;
+}
+.prose-body li {
+  margin-top: 0.35em;
+}
+.prose-body img {
+  margin-top: 1.5em;
+  border-radius: 0.5rem;
+}
+.prose-body em {
+  font-style: italic;
+}
+
+/*
+ * Scroll-triggered section reveals — same mechanism as the church site.
+ * Without JavaScript, or with "reduce motion" on, everything is visible.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  html.js-reveal .reveal-pending {
+    opacity: 0;
+    transform: translateY(40px);
+    transition:
+      opacity 1.3s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 1.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  html.js-reveal .revealed {
+    opacity: 1;
+    transform: none;
+  }
+
+  html.js-reveal .stagger-child {
+    opacity: 0;
+    transform: translateY(28px) scale(0.985);
+    transition:
+      opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  html.js-reveal .stagger-child.stagger-in {
+    opacity: 1;
+    transform: none;
+  }
+
+  html.js-reveal .reveal-pending img {
+    transform: scale(1.05);
+    transition: transform 1.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  html.js-reveal .revealed img {
+    transform: none;
+  }
+
+  .animate-rise {
+    opacity: 0;
+    transform: translateY(34px);
+    animation: rise 1.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  .animate-rise-1 { animation-delay: 0.1s; }
+  .animate-rise-2 { animation-delay: 0.35s; }
+  .animate-rise-3 { animation-delay: 0.6s; }
+  .animate-rise-4 { animation-delay: 0.85s; }
+  .animate-rise-5 { animation-delay: 1.1s; }
+
+  .hover-lift {
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+  }
+  .hover-lift:hover {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes rise {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "Pastor Adam Summers",
+  "verse": {
+    "text": "For to me to live is Christ, and to die is gain.",
+    "reference": "Philippians 1:21"
+  },
+  "secondaryVerse": {
+    "text": "And I thank Christ Jesus our Lord, who hath enabled me, for that he counted me faithful, putting me into the ministry.",
+    "reference": "1 Timothy 1:12"
+  },
+  "email": "pastorsummers@icloud.com",
+  "facebook": "https://www.facebook.com/pastoradamsummers",
+  "church": {
+    "name": "Faith Baptist Church",
+    "url": "https://fbcchelsea.org",
+    "city": "Chelsea, Michigan"
+  },
+  "subscribeBlurb": "Subscribe to weekly updates and receive sermons and special music notifications."
+}
