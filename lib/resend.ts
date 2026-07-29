@@ -56,6 +56,25 @@ export async function broadcastNames(): Promise<string[]> {
   return list.map((b: { name?: string }) => b.name ?? "");
 }
 
+/** Send a one-off transactional email (e.g. the subscribe welcome). */
+export async function sendEmail(opts: {
+  to: string;
+  subject: string;
+  html: string;
+  replyTo?: string;
+}) {
+  return resend("/emails", {
+    method: "POST",
+    body: JSON.stringify({
+      from: fromAddress(),
+      to: [opts.to],
+      subject: opts.subject,
+      html: opts.html,
+      ...(opts.replyTo ? { reply_to: [opts.replyTo] } : {}),
+    }),
+  });
+}
+
 /** Create a broadcast to the audience and send it immediately. */
 export async function sendBroadcast(opts: {
   name: string;

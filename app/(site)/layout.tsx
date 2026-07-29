@@ -22,6 +22,7 @@ export default async function SiteLayout({
       ? [{ label: "Devotions", href: "/devotions" }]
       : []),
     { label: "Contact", href: "/contact" },
+    { label: "Search", href: "/search" },
   ];
 
   const subscribeHref = `mailto:${site.email}?subject=${encodeURIComponent(

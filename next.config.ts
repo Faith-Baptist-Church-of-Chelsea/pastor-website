@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
   // whole content folder for that function explicitly.
   outputFileTracingIncludes: {
     "/api/announce": ["./content/**/*"],
+    "/api/subscribe": ["./content/**/*"],
   },
 };
 

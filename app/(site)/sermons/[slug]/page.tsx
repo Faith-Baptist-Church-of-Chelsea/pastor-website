@@ -2,7 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import SermonCard, { formatDate } from "@/components/SermonCard";
-import { getPostsFull, getSermonsFull } from "@/lib/content";
+import MarkdownBody from "@/components/MarkdownBody";
+import { getPostsFull, getSermonsFull, getTranscript } from "@/lib/content";
 
 export async function generateStaticParams() {
   const sermons = await getSermonsFull();
@@ -31,7 +32,11 @@ export default async function SermonPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const [sermons, posts] = await Promise.all([getSermonsFull(), getPostsFull()]);
+  const [sermons, posts, transcript] = await Promise.all([
+    getSermonsFull(),
+    getPostsFull(),
+    getTranscript(slug),
+  ]);
   const sermon = sermons.find((s) => s.slug === slug);
   if (!sermon) notFound();
 
@@ -61,6 +66,20 @@ export default async function SermonPage({
 
       <section className="mx-auto max-w-3xl px-4 py-12">
         <SermonCard sermon={sermon} showHeader={false} />
+
+        {transcript && (
+          <details className="group mt-8 rounded-xl border border-slate-200 bg-white shadow-sm">
+            <summary className="cursor-pointer select-none p-6 font-semibold text-slate-900 transition-colors hover:text-brand-700">
+              Read the transcript
+              <span className="ml-2 text-sm font-normal text-slate-500">
+                (auto-generated from the recording)
+              </span>
+            </summary>
+            <div className="border-t border-slate-100 p-6 pt-4">
+              <MarkdownBody>{transcript}</MarkdownBody>
+            </div>
+          </details>
+        )}
 
         {related.length > 0 && (
           <div className="mt-12">

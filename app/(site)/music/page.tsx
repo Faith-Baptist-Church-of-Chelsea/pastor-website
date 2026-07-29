@@ -2,7 +2,7 @@ import Image from "next/image";
 import type { Metadata } from "next";
 import PageHero from "@/components/PageHero";
 import YouTubeEmbed from "@/components/YouTubeEmbed";
-import { getMusic } from "@/lib/content";
+import { getMusic, getPhotos } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Summers' Family Music",
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 export default async function MusicPage() {
-  const music = await getMusic();
+  const [music, photos] = await Promise.all([getMusic(), getPhotos()]);
   return (
     <main className="flex-1">
       <PageHero
@@ -21,7 +21,7 @@ export default async function MusicPage() {
       <section className="mx-auto max-w-6xl px-4 py-14">
         <div className="mb-10 overflow-hidden rounded-xl">
           <Image
-            src="/images/family-music.jpg"
+            src={photos.musicHeader}
             alt="The Summers family singing"
             width={1600}
             height={744}

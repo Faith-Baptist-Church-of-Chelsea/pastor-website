@@ -2,7 +2,7 @@ import Image from "next/image";
 import type { Metadata } from "next";
 import PageHero from "@/components/PageHero";
 import MarkdownBody from "@/components/MarkdownBody";
-import { getAbout, getSite } from "@/lib/content";
+import { getAbout, getPhotos, getSite } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "About",
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 };
 
 export default async function AboutPage() {
-  const [body, site] = await Promise.all([getAbout(), getSite()]);
+  const [body, site, photos] = await Promise.all([getAbout(), getSite(), getPhotos()]);
   return (
     <main className="flex-1">
       <PageHero
@@ -22,7 +22,7 @@ export default async function AboutPage() {
           <div className="max-w-2xl">
             <MarkdownBody>{body}</MarkdownBody>
             <Image
-              src="/images/signature.png"
+              src={photos.signature}
               alt="Pastor Summers' signature"
               width={300}
               height={150}
@@ -31,7 +31,7 @@ export default async function AboutPage() {
           </div>
           <div className="space-y-6">
             <Image
-              src="/images/summers-family.jpg"
+              src={photos.family}
               alt="The Summers family"
               width={600}
               height={450}

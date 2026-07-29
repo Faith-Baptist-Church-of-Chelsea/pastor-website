@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import MarkdownBody from "@/components/MarkdownBody";
-import { getPost, getPosts, getSermonsFull } from "@/lib/content";
+import { getPhotos, getPost, getPosts, getSermonsFull } from "@/lib/content";
 import { extractBooks } from "@/lib/bible";
 
 export async function generateStaticParams() {
@@ -25,7 +25,8 @@ export default async function PostPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const post = await getPost((await params).slug);
+  const { slug } = await params;
+  const [post, photos] = await Promise.all([getPost(slug), getPhotos()]);
   if (!post) notFound();
 
   return (
@@ -42,23 +43,55 @@ export default async function PostPage({
             {post.title}
           </h1>
           <p className="animate-rise animate-rise-2 mt-3 text-sm text-slate-400">
-            {formatDate(post.date)} · M. Adam Summers
+            {formatDate(post.date)} · M. Adam Summers · {readingTime(post.body)} min read
           </p>
         </div>
       </section>
       <article className="mx-auto max-w-3xl px-4 py-12">
         <MarkdownBody>{post.body}</MarkdownBody>
         <Image
-          src="/images/signature.png"
+          src={photos.signature}
           alt="Pastor Summers' signature"
           width={300}
           height={150}
           className="mt-10 h-auto w-40"
         />
         <RelatedSermons bodyText={`${post.title}\n${post.body}`} />
+        <PostPager slug={slug} />
       </article>
     </main>
   );
+}
+
+// Older/newer links at the bottom of every post.
+async function PostPager({ slug }: { slug: string }) {
+  const posts = await getPosts(); // newest first
+  const i = posts.findIndex((p) => p.slug === slug);
+  const newer = i > 0 ? posts[i - 1] : null;
+  const older = i >= 0 && i < posts.length - 1 ? posts[i + 1] : null;
+  if (!newer && !older) return null;
+  return (
+    <nav aria-label="More posts" className="mt-12 grid gap-4 border-t border-slate-200 pt-8 sm:grid-cols-2">
+      {older ? (
+        <Link href={`/pastors-desk/${older.slug}`} className="hover-lift rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+          <span className="text-xs uppercase tracking-wider text-slate-500">← Older</span>
+          <span className="mt-1 block font-semibold text-slate-900">{older.title}</span>
+        </Link>
+      ) : (
+        <span aria-hidden="true" />
+      )}
+      {newer && (
+        <Link href={`/pastors-desk/${newer.slug}`} className="hover-lift rounded-lg border border-slate-200 bg-white p-4 text-right shadow-sm">
+          <span className="text-xs uppercase tracking-wider text-slate-500">Newer →</span>
+          <span className="mt-1 block font-semibold text-slate-900">{newer.title}</span>
+        </Link>
+      )}
+    </nav>
+  );
+}
+
+function readingTime(text: string) {
+  return Math.max(1, Math.round(text.split(/\s+/).length / 200));
 }
 
 // Sermons preached from the books this post quotes.

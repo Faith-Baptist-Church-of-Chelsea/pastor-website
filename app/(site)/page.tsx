@@ -1,13 +1,14 @@
 import Link from "next/link";
 import Image from "next/image";
 import SubscribeForm from "@/components/SubscribeForm";
-import { getPosts, getSermons, getSite } from "@/lib/content";
+import { getPhotos, getPosts, getSermons, getSite } from "@/lib/content";
 
 export default async function HomePage() {
-  const [site, sermons, posts] = await Promise.all([
+  const [site, sermons, posts, photos] = await Promise.all([
     getSite(),
     getSermons(),
     getPosts(),
+    getPhotos(),
   ]);
   const latestSermon = sermons[0];
   const latestPosts = posts.slice(0, 3);
@@ -50,7 +51,7 @@ export default async function HomePage() {
           </div>
           <div className="animate-rise animate-rise-3 mx-auto w-64 sm:w-80 lg:w-full">
             <Image
-              src="/images/pastor-adam-summers.jpg"
+              src={photos.hero}
               alt="Pastor Adam Summers"
               width={720}
               height={900}
@@ -123,7 +124,7 @@ export default async function HomePage() {
       <section className="reveal-pending bg-slate-950 text-white">
         <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 lg:grid-cols-2">
           <Image
-            src="/images/adam-and-melody.jpg"
+            src={photos.music}
             alt="Pastor Adam and Melody Summers singing"
             width={900}
             height={600}

@@ -136,6 +136,26 @@ export async function getAbout() {
   return about.body();
 }
 
+/** Site photos, with fallbacks to the originally-migrated images. */
+export async function getPhotos() {
+  const p = await reader.singletons.photos.read();
+  return {
+    hero: p?.hero ?? "/images/pastor-adam-summers.jpg",
+    music: p?.music ?? "/images/adam-and-melody.jpg",
+    family: p?.family ?? "/images/summers-family.jpg",
+    musicHeader: p?.musicHeader ?? "/images/family-music.jpg",
+    signature: p?.signature ?? "/images/signature.png",
+  };
+}
+
+/** A sermon's transcript (markdown), or null if none exists yet. */
+export async function getTranscript(slug: string) {
+  const entry = await reader.collections.transcripts.read(slug);
+  if (!entry) return null;
+  const text = (await entry.text()).trim();
+  return text || null;
+}
+
 /** Strip MDX comments and split into clean paragraphs. */
 function mdxToParagraphs(text: string): string[] {
   return text

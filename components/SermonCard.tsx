@@ -1,6 +1,7 @@
 import Link from "next/link";
 import YouTubeEmbed from "@/components/YouTubeEmbed";
 import ScriptureRef from "@/components/ScriptureRef";
+import SermonAudio from "@/components/SermonAudio";
 import { youtubeId } from "@/lib/media";
 
 export type SermonCardData = {
@@ -52,12 +53,7 @@ export default function SermonCard({
           <YouTubeEmbed id={video} title={s.title} />
         </div>
       )}
-      {s.audioFile && (
-        <audio controls preload="none" src={s.audioFile} className="mt-5 w-full">
-          Your browser doesn&rsquo;t support audio playback.{" "}
-          <a href={s.audioFile}>Download the recording instead.</a>
-        </audio>
-      )}
+      {s.audioFile && <SermonAudio src={s.audioFile} title={s.title} />}
       {!s.audioFile && s.audioUrl && (
         <a
           href={s.audioUrl}

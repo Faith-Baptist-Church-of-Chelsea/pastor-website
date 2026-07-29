@@ -8,7 +8,9 @@ const quickLinks = [
   { label: "Pastor's Desk", href: "/pastors-desk" },
   { label: "Sermons", href: "/sermons" },
   { label: "Sermon Podcast", href: "/podcast.xml" },
+  { label: "Blog RSS", href: "/feed.xml" },
   { label: "Family Music", href: "/music" },
+  { label: "Search", href: "/search" },
   { label: "Contact", href: "/contact" },
 ];
 

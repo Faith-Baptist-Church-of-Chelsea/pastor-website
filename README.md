@@ -133,6 +133,27 @@ podcastsconnect.apple.com and podcasters.spotify.com — after approval, new
 sermons appear in people's podcast apps automatically. Cover art is
 `public/images/podcast-cover.jpg`.
 
+## Changing the photos on the site
+
+/keystatic → **Site Photos** → click any slot, upload a new image, Save.
+That covers: the homepage portrait, the homepage music photo, the About
+family photo, the Music page banner, and the signature that ends every
+blog post. The description under each slot says what shape works best.
+Blog-post images are added inline while writing the post; event-style
+graphics aren't a thing on this site.
+
+## Sermon transcripts
+
+Every sermon with a recording has an auto-generated transcript
+(whisper.cpp, small.en model) shown in a collapsible "Read the
+transcript" section — this makes sermons searchable on /search and
+indexable by Google. They're ordinary content: /keystatic → **Sermon
+Transcripts** — edit freely to fix mis-heard names. The transcript file
+must have the SAME slug as its sermon to link up.
+
+**For new sermons:** ask Claude Code to "transcribe the new sermon" —
+or skip it; everything works fine without a transcript.
+
 ## Little touches worth knowing about
 
 - Every sermon and blog post has its own share image (dark + gold card) —
@@ -144,9 +165,16 @@ sermons appear in people's podcast apps automatically. Cover art is
 - Devotions can be written (just type in the "Devotion text" field), video
   (paste a YouTube ID), or both. The Devotions page stays out of the menu
   until the first one exists.
-- Vercel Web Analytics is wired in (`@vercel/analytics`) — enable it once
-  in the Vercel dashboard → project → Analytics, then traffic shows up
-  there with no cookies/banners needed.
+- Vercel Web Analytics is wired in (`@vercel/analytics`) and enabled —
+  traffic shows in the dashboard's Analytics tab, no cookies/banners.
+- New subscribers get an instant welcome email with the latest sermon
+  and the podcast link.
+- The sermon player has a playback-speed button and remembers where each
+  listener left off (per browser, via localStorage).
+- Blog posts show reading time and older/newer links; the blog also has
+  an RSS feed at /feed.xml (separate from the sermon podcast feed).
+- /search searches sermons (including transcripts), posts, devotions,
+  and music titles — instant, client-side, no service behind it.
 
 ## Deploying
 
