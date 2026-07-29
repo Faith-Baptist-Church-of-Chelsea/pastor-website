@@ -148,14 +148,6 @@ export async function getPhotos() {
   };
 }
 
-/** A sermon's transcript (markdown), or null if none exists yet. */
-export async function getTranscript(slug: string) {
-  const entry = await reader.collections.transcripts.read(slug);
-  if (!entry) return null;
-  const text = (await entry.text()).trim();
-  return text || null;
-}
-
 /** Strip MDX comments and split into clean paragraphs. */
 function mdxToParagraphs(text: string): string[] {
   return text

@@ -6,7 +6,6 @@ import {
   getMusic,
   getPostsFull,
   getSermonsFull,
-  getTranscript,
   reader,
 } from "@/lib/content";
 
@@ -24,15 +23,13 @@ export default async function SearchPage() {
   ]);
 
   const entries: SearchEntry[] = [
-    ...(await Promise.all(
-      sermons.map(async (s) => ({
-        type: "Sermon",
-        title: s.title,
-        text: [s.passage, s.description, (await getTranscript(s.slug)) ?? ""].join(" "),
-        url: `/sermons/${s.slug}`,
-        meta: [s.date, s.passage].filter(Boolean).join(" · "),
-      }))
-    )),
+    ...sermons.map((s) => ({
+      type: "Sermon",
+      title: s.title,
+      text: [s.passage, s.description].join(" "),
+      url: `/sermons/${s.slug}`,
+      meta: [s.date, s.passage].filter(Boolean).join(" · "),
+    })),
     ...(await Promise.all(
       posts.map(async (p) => {
         const entry = await reader.collections.posts.read(p.slug);
