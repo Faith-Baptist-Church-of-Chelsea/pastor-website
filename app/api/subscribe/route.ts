@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 import { addContact, resendConfigured, sendEmail } from "@/lib/resend";
 import { makeRateLimiter, requestIp } from "@/lib/rate-limit";
 import { getSermons, getSite } from "@/lib/content";
+import { renderEmail } from "@/lib/email-template";
 
 const limited = makeRateLimiter(5, 60 * 60 * 1000); // 5/hour/IP
 
@@ -68,26 +69,30 @@ async function sendWelcome(to: string) {
     to,
     replyTo: site.email,
     subject: "You're on the list — updates from Pastor Adam Summers",
-    html: `
-    <div style="font-family:Georgia,serif;max-width:560px;margin:0 auto;padding:24px;color:#0f172a;">
-      <h1 style="font-size:22px;">Welcome!</h1>
-      <p>You'll now get an email whenever Pastor Summers shares a new sermon,
-      blog post, or devotion — usually the morning after it's posted.</p>
-      <p style="font-style:italic;color:#475569;">“For to me to live is Christ, and to die is gain.” — Philippians 1:21</p>
-      ${
-        latest
-          ? `<p style="margin-top:20px;"><strong>In the meantime, the latest sermon:</strong><br/>
-             <a href="${base}/sermons/${latest.slug}" style="color:#854d0e;font-size:18px;">${latest.title}</a>
-             ${latest.passage ? `<br/><span style="color:#64748b;">${latest.passage}</span>` : ""}</p>`
-          : ""
-      }
-      <p style="margin-top:20px;">Prefer podcasts? Add
-      <a href="${base}/podcast.xml" style="color:#854d0e;">the sermon feed</a>
-      to any podcast app and new preaching arrives automatically.</p>
-      <p style="margin-top:24px;font-size:12px;color:#94a3b8;">
-        You're receiving this because you subscribed at ${base.replace("https://", "")}.
-        Reply to this email to reach Pastor Summers directly.
-      </p>
-    </div>`,
+    html: renderEmail({
+      preheader: "New sermons, blog posts, and music — straight to your inbox.",
+      heading: "Welcome — you're on the list!",
+      intro: `You'll now get an email whenever Pastor Summers shares a new
+        sermon, blog post, or devotion — usually the morning after it's
+        posted. Prefer podcasts? <a href="${base}/podcast.xml"
+        style="color:#a16207;">Add the sermon feed</a> to any podcast app
+        and new preaching arrives automatically.`,
+      items: latest
+        ? [
+            {
+              kind: "In the meantime — the latest sermon",
+              title: latest.title,
+              url: `${base}/sermons/${latest.slug}`,
+              detail: latest.passage || undefined,
+            },
+          ]
+        : [],
+      cta: latest
+        ? { label: "Listen to the Sermon", url: `${base}/sermons/${latest.slug}` }
+        : { label: "Visit the Website", url: base },
+      footerNote: `You're receiving this because you subscribed at
+        ${base.replace("https://", "")}.<br/>Reply to this email to reach
+        Pastor Summers directly.`,
+    }),
   });
 }

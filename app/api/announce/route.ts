@@ -8,6 +8,7 @@
 import { NextResponse } from "next/server";
 import { getDevotions, getPosts, getSermons } from "@/lib/content";
 import { broadcastNames, resendConfigured, sendBroadcast } from "@/lib/resend";
+import { renderEmail } from "@/lib/email-template";
 
 export const dynamic = "force-dynamic";
 
@@ -62,33 +63,25 @@ export async function GET(request: Request) {
       ? `${fresh[0].kind}: ${fresh[0].title}`
       : `New from Pastor Summers — ${fresh.map((i) => i.title).join(", ").slice(0, 80)}…`;
 
-  const rows = fresh
-    .map(
-      (i) => `
-      <tr><td style="padding:12px 0;border-bottom:1px solid #e2e8f0;">
-        <div style="font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#854d0e;">${i.kind}</div>
-        <a href="${i.url}" style="font-size:18px;color:#0f172a;font-weight:bold;text-decoration:none;">${escapeHtml(i.title)}</a>
-      </td></tr>`
-    )
-    .join("");
-
-  const html = `
-  <div style="font-family:Georgia,serif;max-width:560px;margin:0 auto;padding:24px;color:#0f172a;">
-    <h1 style="font-size:22px;">Pastor Adam Summers</h1>
-    <p style="font-style:italic;color:#475569;">“For to me to live is Christ, and to die is gain.” — Philippians 1:21</p>
-    <table style="width:100%;border-collapse:collapse;">${rows}</table>
-    <p style="margin-top:24px;"><a href="${base}" style="color:#854d0e;">Visit the website</a></p>
-    <p style="margin-top:24px;font-size:12px;color:#94a3b8;">
-      You're receiving this because you subscribed to updates from Pastor Adam Summers.
-      <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#94a3b8;">Unsubscribe</a>
-    </p>
-  </div>`;
+  const html = renderEmail({
+    preheader: fresh.map((i) => i.title).join(" · ").slice(0, 120),
+    heading: fresh.length === 1 ? "Something new for you" : "New this week",
+    intro: `Pastor Summers has shared ${
+      fresh.length === 1 ? "something new" : "a few new things"
+    } — here ${fresh.length === 1 ? "it is" : "they are"}:`,
+    items: fresh.map((i) => ({
+      kind: i.kind,
+      title: i.title,
+      url: i.url,
+      detail: undefined,
+    })),
+    cta: { label: "Visit the Website", url: base },
+    footerNote: `You're receiving this because you subscribed to updates
+      from Pastor Adam Summers.
+      <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#9ca3af;">Unsubscribe</a>`,
+  });
 
   const name = `announced[${fresh.map((i) => i.key).join(",")}]`;
   const id = await sendBroadcast({ name, subject, html });
   return NextResponse.json({ sent: true, broadcast: id, items: fresh.map((i) => i.key) });
-}
-
-function escapeHtml(s: string) {
-  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
