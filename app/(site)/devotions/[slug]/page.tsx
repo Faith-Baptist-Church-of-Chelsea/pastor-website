@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import DevotionCard, { formatEntryDate } from "@/components/DevotionCard";
 import { getDevotionBySlug, getPublishedDevotions, dbConfigured } from "@/lib/db";
-import { getSite } from "@/lib/content";
+import site from "@/content/site.json";
 
 export const revalidate = 300;
 
@@ -34,7 +34,7 @@ export default async function DevotionPage({
 }) {
   if (!dbConfigured()) notFound();
   const { slug } = await params;
-  const [devotion, site] = await Promise.all([getDevotionBySlug(slug), getSite()]);
+  const devotion = await getDevotionBySlug(slug);
   if (!devotion) notFound();
 
   // "More from this book" — the same trail pattern the sermon pages use.

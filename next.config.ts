@@ -9,6 +9,10 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     "/api/announce": ["./content/**/*"],
     "/api/subscribe": ["./content/**/*"],
+    // These render per-request (they read searchParams), so they need the
+    // content files at runtime rather than only at build time.
+    "/devotions": ["./content/**/*"],
+    "/devotions/[slug]": ["./content/**/*"],
   },
 };
 
