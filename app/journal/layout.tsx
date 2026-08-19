@@ -8,6 +8,12 @@ export const metadata: Metadata = {
     capable: true,
     title: "Devotions",
     statusBarStyle: "black-translucent",
+    // iOS ignores the manifest for these, so they're declared here.
+    startupImage: [{ url: "/icons/splash-1170x2532.png" }],
+  },
+  icons: {
+    apple: [{ url: "/icons/icon-180.png", sizes: "180x180" }],
+    icon: [{ url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" }],
   },
 };
 

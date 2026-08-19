@@ -115,6 +115,13 @@ export default function JournalApp() {
   const entry = entries.find((e) => e.date === date);
   const isToday = date === todayISO();
 
+  // Nudge toward a backup once there's something worth losing, and then
+  // only every 30 days. Clearing browser data really does erase everything.
+  const daysSincePrompt = settings.lastExportPrompt
+    ? (Date.now() - new Date(`${settings.lastExportPrompt}T12:00:00`).getTime()) / 86_400_000
+    : Infinity;
+  const nudgeExport = entries.length >= 5 && daysSincePrompt > 30;
+
   return (
     <div className="mx-auto max-w-2xl px-4 pb-24 pt-4">
       {/* Day navigation */}
@@ -154,6 +161,32 @@ export default function JournalApp() {
             className="rounded-lg border border-slate-300 px-3 py-2 text-slate-600 hover:border-slate-500 disabled:opacity-30"
           >
             →
+          </button>
+        </div>
+      )}
+
+      {nudgeExport && tab !== "settings" && (
+        <div className="mt-4 flex flex-wrap items-center gap-3 rounded-xl bg-paper p-4">
+          <p className="flex-1 text-sm text-slate-700">
+            You&rsquo;ve written {entries.length} entries. Worth saving a copy —
+            clearing your browser data would erase them.
+          </p>
+          <button
+            onClick={() => setTab("settings")}
+            className="rounded-lg bg-brand-600 px-3 py-2 text-sm font-semibold text-white hover:bg-brand-500"
+          >
+            Save a copy
+          </button>
+          <button
+            onClick={async () => {
+              const next = { ...settings, lastExportPrompt: todayISO() };
+              await saveSettings(next);
+              setSettings(next);
+            }}
+            aria-label="Dismiss backup reminder"
+            className="text-sm text-slate-500 hover:text-slate-800"
+          >
+            Later
           </button>
         </div>
       )}

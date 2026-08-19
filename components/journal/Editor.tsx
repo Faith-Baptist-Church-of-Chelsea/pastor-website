@@ -7,6 +7,7 @@ import {
   getEntry,
   isBlank,
   saveEntry,
+  showsAsShared,
   type Entry,
   type Settings,
 } from "@/lib/journal/store";
@@ -225,15 +226,15 @@ export default function Editor({
         <button
           type="button"
           onClick={() => onShare(draft)}
-          disabled={isBlank(draft)}
+          disabled={isBlank(draft) || showsAsShared(draft)}
           className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-500 disabled:opacity-40"
         >
           Share this with Pastor Summers
         </button>
 
         <span className="ml-auto text-xs text-slate-500" aria-live="polite">
-          {draft.sharedAt
-            ? "Shared"
+          {showsAsShared(draft)
+            ? "Sent to Pastor Summers"
             : savedAt
               ? "Saved on this device"
               : ""}

@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { extractBooks } from "@/lib/bible";
-import { shareableText, type Entry } from "@/lib/journal/store";
+import { shareableText, showsAsShared, type Entry } from "@/lib/journal/store";
 
 // Everything written so far, newest first, searchable and filterable.
 // All of it runs against the local copy — no request leaves the device.
@@ -129,7 +129,7 @@ export default function EntryList({
                   })}
                 </span>
                 {e.passage && <span className="text-sm text-brand-700">{e.passage}</span>}
-                {e.sharedAt && (
+                {showsAsShared(e) && (
                   <span className="text-xs text-slate-400">shared</span>
                 )}
               </div>

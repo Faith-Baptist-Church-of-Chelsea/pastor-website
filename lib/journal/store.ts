@@ -114,6 +114,17 @@ export function isBlank(e: Entry): boolean {
   );
 }
 
+/**
+ * Whether an entry should still show as shared. Rejections are silent by
+ * design, so after a month the marker quietly goes away rather than
+ * leaving someone staring at "pending" forever — and they're free to
+ * share it again.
+ */
+export function showsAsShared(e: Entry): boolean {
+  if (!e.sharedAt) return false;
+  return Date.now() - new Date(e.sharedAt).getTime() < 30 * 24 * 60 * 60 * 1000;
+}
+
 /** The text a shared devotion is built from, whichever mode they wrote in. */
 export function shareableText(e: Entry): string {
   if (e.mode === "freeform") return e.freeform.trim();
