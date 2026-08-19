@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { canonical } from "@/lib/seo";
 import PageHero from "@/components/PageHero";
 import SubscribeForm from "@/components/SubscribeForm";
 import { getSite } from "@/lib/content";
@@ -6,6 +7,7 @@ import { getSite } from "@/lib/content";
 export const metadata: Metadata = {
   title: "Contact",
   description: "Contact Pastor M. Adam Summers.",
+  ...canonical("/contact"),
 };
 
 export default async function ContactPage() {

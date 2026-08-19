@@ -1,9 +1,22 @@
 import type { MetadataRoute } from "next";
+import { SITE_URL } from "@/lib/seo";
 
 export default function robots(): MetadataRoute.Robots {
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://pastoradamsummers.com";
   return {
-    rules: [{ userAgent: "*", allow: "/", disallow: ["/keystatic", "/api/"] }],
-    sitemap: `${base}/sitemap.xml`,
+    rules: [
+      {
+        userAgent: "*",
+        allow: "/",
+        disallow: [
+          "/api/",
+          "/keystatic", // the site editor
+          "/admin", // the devotion review queue
+          "/journal/standalone", // a file download, not a page
+          "/search", // results pages are thin and duplicate real content
+        ],
+      },
+    ],
+    sitemap: `${SITE_URL}/sitemap.xml`,
+    host: SITE_URL,
   };
 }

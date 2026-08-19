@@ -6,9 +6,16 @@ import { getMusic, getPostsFull, getSermonsFull, reader } from "@/lib/content";
 export const metadata: Metadata = {
   title: "Search",
   description: "Search sermons, blog posts, devotions, and music.",
+  // Results pages are thin and duplicate content that's already indexed.
+  robots: { index: false, follow: true },
 };
 
-export default async function SearchPage() {
+export default async function SearchPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>;
+}) {
+  const { q } = await searchParams;
   const [sermons, posts, music] = await Promise.all([
     getSermonsFull(),
     getPostsFull(),
@@ -51,7 +58,7 @@ export default async function SearchPage() {
         subtitle="Every sermon, blog post, devotion, and song — one box."
       />
       <section className="mx-auto max-w-3xl px-4 py-14">
-        <SearchBox entries={entries} />
+        <SearchBox entries={entries} initialQuery={q ?? ""} />
       </section>
     </main>
   );

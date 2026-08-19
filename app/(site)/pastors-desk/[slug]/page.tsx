@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import MarkdownBody from "@/components/MarkdownBody";
 import { getPhotos, getPost, getPosts, getSermonsFull } from "@/lib/content";
 import { extractBooks } from "@/lib/bible";
+import { JsonLd, breadcrumbSchema, canonical, postSchema } from "@/lib/seo";
 
 export async function generateStaticParams() {
   const posts = await getPosts();
@@ -16,8 +17,21 @@ export async function generateMetadata({
 }: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const post = await getPost((await params).slug);
-  return { title: post?.title ?? "Pastor's Desk" };
+  const { slug } = await params;
+  const post = await getPost(slug);
+  if (!post) return { title: "Pastor's Desk" };
+  const description = firstSentences(post.body);
+  return {
+    title: post.title,
+    description,
+    ...canonical(`/pastors-desk/${slug}`),
+    openGraph: {
+      title: post.title,
+      description,
+      type: "article",
+      publishedTime: post.date,
+    },
+  };
 }
 
 export default async function PostPage({
@@ -31,6 +45,20 @@ export default async function PostPage({
 
   return (
     <main className="flex-1">
+      <JsonLd
+        data={postSchema({
+          slug,
+          title: post.title,
+          date: post.date,
+          description: firstSentences(post.body),
+        })}
+      />
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Pastor's Desk", path: "/pastors-desk" },
+          { name: post.title, path: `/pastors-desk/${slug}` },
+        ])}
+      />
       <section className="bg-slate-950 text-white">
         <div className="mx-auto max-w-3xl px-4 py-14">
           <Link
@@ -88,6 +116,21 @@ async function PostPager({ slug }: { slug: string }) {
       )}
     </nav>
   );
+}
+
+/** A clean one-or-two-sentence summary for search results and previews. */
+function firstSentences(markdown: string, limit = 165): string {
+  const plain = markdown
+    .replace(/\{\/\*[\s\S]*?\*\/\}/g, "")
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
+    .replace(/[#>*_`]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (plain.length <= limit) return plain;
+  const cut = plain.slice(0, limit);
+  const lastStop = Math.max(cut.lastIndexOf(". "), cut.lastIndexOf("! "), cut.lastIndexOf("? "));
+  return lastStop > 60 ? cut.slice(0, lastStop + 1) : `${cut.trimEnd()}…`;
 }
 
 function readingTime(text: string) {

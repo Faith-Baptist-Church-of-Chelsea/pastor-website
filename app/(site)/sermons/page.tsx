@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { canonical } from "@/lib/seo";
 import PageHero from "@/components/PageHero";
 import SermonList from "@/components/SermonList";
 import { getSermonsFull, getSite } from "@/lib/content";
@@ -7,6 +8,7 @@ export const metadata: Metadata = {
   title: "Sermons",
   description:
     "Preaching and sermon notes from Pastor M. Adam Summers — expository preaching from the Word of God.",
+  ...canonical("/sermons"),
 };
 
 export default async function SermonsPage() {

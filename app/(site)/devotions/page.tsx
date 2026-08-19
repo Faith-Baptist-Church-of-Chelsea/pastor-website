@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import PageHero from "@/components/PageHero";
+import { canonical } from "@/lib/seo";
 import DevotionCard from "@/components/DevotionCard";
 import {
   countPublishedDevotions,
@@ -11,16 +12,36 @@ import {
 
 const PER_PAGE = 20;
 
-export const metadata: Metadata = {
-  title: "Devotions",
-  description:
-    "Devotional reflections from the people of Faith Baptist Church — what God is teaching them in their own daily reading, shared in their own words.",
-  openGraph: {
-    title: "Devotions | Pastor Adam Summers",
-    description:
-      "What God is teaching our people in their daily reading, in their own words.",
-  },
-};
+const BLURB =
+  "Devotional reflections from the people of Faith Baptist Church — what God is teaching them in their own daily reading, shared in their own words.";
+
+// Paginated and filtered views each canonicalise to themselves, so page 2
+// and a book filter are indexed as their own thing rather than competing
+// with page 1 as near-duplicates.
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string; book?: string }>;
+}): Promise<Metadata> {
+  const { page, book } = await searchParams;
+  const query = new URLSearchParams();
+  if (book) query.set("book", book);
+  if (page && page !== "1") query.set("page", page);
+  const suffix = query.toString() ? `?${query}` : "";
+
+  const name = book ? `Devotions from ${book}` : "Devotions";
+  const title = page && page !== "1" ? `${name} — page ${page}` : name;
+  const description = book
+    ? `Devotional reflections from ${book}, shared by the people of Faith Baptist Church in their own words.`
+    : BLURB;
+
+  return {
+    title,
+    description,
+    ...canonical(`/devotions${suffix}`),
+    openGraph: { title: `${title} | Pastor Adam Summers`, description },
+  };
+}
 
 // Revalidate rather than rebuild: publishing from the admin queue shows up
 // within a minute without a deploy.

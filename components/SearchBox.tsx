@@ -13,8 +13,14 @@ export type SearchEntry = {
 
 // Instant client-side search — the whole site's text arrives with the
 // page (it's small), so results appear as you type with no server calls.
-export default function SearchBox({ entries }: { entries: SearchEntry[] }) {
-  const [query, setQuery] = useState("");
+export default function SearchBox({
+  entries,
+  initialQuery = "",
+}: {
+  entries: SearchEntry[];
+  initialQuery?: string;
+}) {
+  const [query, setQuery] = useState(initialQuery);
   const [devotions, setDevotions] = useState<SearchEntry[]>([]);
 
   // Devotions are searched on the server (there can be thousands of them),
@@ -41,6 +47,13 @@ export default function SearchBox({ entries }: { entries: SearchEntry[] }) {
       clearTimeout(timer);
       controller.abort();
     };
+  }, [query]);
+
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (query.trim()) url.searchParams.set("q", query.trim());
+    else url.searchParams.delete("q");
+    window.history.replaceState(null, "", url);
   }, [query]);
 
   const localResults = useMemo(() => {

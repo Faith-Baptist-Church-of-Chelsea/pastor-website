@@ -142,6 +142,34 @@ blog post. The description under each slot says what shape works best.
 Blog-post images are added inline while writing the post; event-style
 graphics aren't a thing on this site.
 
+## SEO
+
+Nothing here needs maintaining — it all derives from the content — but so
+you know what's in place:
+
+- **Structured data (JSON-LD)** on every page: a `Person` for Pastor
+  Summers tied to a `Church`, plus `Article` for sermons (with the
+  recording as an `AudioObject`, duration included), `BlogPosting` for
+  posts, `Article` for shared devotions, and breadcrumbs on detail pages.
+  This is what lets search engines understand that "M. Adam Summers" is a
+  person and that a sermon is a recording, which the page text alone
+  can't say. **If you change a page's content, make sure the schema still
+  matches it** — wrong structured data is worse than none.
+- **Canonical URLs** everywhere. Paginated and book-filtered devotion
+  views canonicalise to themselves so they don't compete as duplicates.
+- **Sitemap** at `/sitemap.xml` with real `lastmod` dates taken from the
+  content. Pages with no meaningful date deliberately don't claim one.
+- **robots.txt** keeps crawlers out of `/admin`, `/keystatic`, `/api/`,
+  `/search` (thin, duplicates real content) and the standalone journal
+  download.
+- **Share cards**: `app/opengraph-image.tsx` generates the default 1200×630
+  card; sermons and posts generate their own with their title on them.
+- `/search?q=…` works as a real URL, which is what the site's
+  `SearchAction` promises search engines.
+
+**Worth doing once, by hand:** submit the sitemap in Google Search Console
+and Bing Webmaster Tools. That's the only step this code can't do.
+
 ## Little touches worth knowing about
 
 - Every sermon and blog post has its own share image (dark + gold card) —

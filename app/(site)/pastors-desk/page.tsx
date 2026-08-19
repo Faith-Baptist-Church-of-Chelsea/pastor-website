@@ -1,11 +1,13 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { canonical } from "@/lib/seo";
 import PageHero from "@/components/PageHero";
 import { getPosts } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Pastor's Desk",
   description: "Blog posts from Pastor M. Adam Summers.",
+  ...canonical("/pastors-desk"),
 };
 
 export default async function PastorsDeskPage() {

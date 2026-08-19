@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import DevotionCard, { formatEntryDate } from "@/components/DevotionCard";
 import { getDevotionBySlug, getPublishedDevotions, dbConfigured } from "@/lib/db";
 import site from "@/content/site.json";
+import { JsonLd, breadcrumbSchema, canonical, devotionSchema } from "@/lib/seo";
 
 export const revalidate = 300;
 
@@ -19,6 +20,7 @@ export async function generateMetadata({
   return {
     title: `${d.passage || "Devotion"} — ${d.display_name}`,
     description: summary,
+    ...canonical(`/devotions/${d.slug}`),
     openGraph: {
       title: `${d.passage || "A devotion"} — shared by ${d.display_name}`,
       description: summary,
@@ -51,6 +53,13 @@ export default async function DevotionPage({
 
   return (
     <main className="flex-1">
+      <JsonLd data={devotionSchema(devotion)} />
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Devotions", path: "/devotions" },
+          { name: devotion.passage || "A devotion", path: `/devotions/${slug}` },
+        ])}
+      />
       <section className="bg-slate-950 text-white">
         <div className="mx-auto max-w-3xl px-4 py-14">
           <Link href="/devotions" className="text-sm text-brand-400 hover:text-brand-500">

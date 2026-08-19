@@ -1,5 +1,6 @@
 import Image from "next/image";
 import type { Metadata } from "next";
+import { canonical } from "@/lib/seo";
 import PageHero from "@/components/PageHero";
 import YouTubeEmbed from "@/components/YouTubeEmbed";
 import { getMusic, getPhotos } from "@/lib/content";
@@ -8,6 +9,7 @@ export const metadata: Metadata = {
   title: "Summers' Family Music",
   description:
     "Special music from Pastor Adam Summers and his family — recordings and videos.",
+  ...canonical("/music"),
 };
 
 export default async function MusicPage() {

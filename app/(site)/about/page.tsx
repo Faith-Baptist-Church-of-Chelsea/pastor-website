@@ -1,5 +1,6 @@
 import Image from "next/image";
 import type { Metadata } from "next";
+import { canonical } from "@/lib/seo";
 import PageHero from "@/components/PageHero";
 import MarkdownBody from "@/components/MarkdownBody";
 import { getAbout, getPhotos, getSite } from "@/lib/content";
@@ -7,6 +8,7 @@ import { getAbout, getPhotos, getSite } from "@/lib/content";
 export const metadata: Metadata = {
   title: "About",
   description: "About Pastor M. Adam Summers of Faith Baptist Church, Chelsea, Michigan.",
+  ...canonical("/about"),
 };
 
 export default async function AboutPage() {

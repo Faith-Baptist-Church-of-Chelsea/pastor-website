@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import SermonCard, { formatDate } from "@/components/SermonCard";
 import { getPostsFull, getSermonsFull } from "@/lib/content";
+import { JsonLd, breadcrumbSchema, canonical, sermonSchema } from "@/lib/seo";
 
 export async function generateStaticParams() {
   const sermons = await getSermonsFull();
@@ -17,11 +18,14 @@ export async function generateMetadata({
   const { slug } = await params;
   const sermon = (await getSermonsFull()).find((s) => s.slug === slug);
   if (!sermon) return { title: "Sermon" };
+  const description =
+    sermon.description ||
+    `A sermon by Pastor M. Adam Summers${sermon.passage ? ` from ${sermon.passage}` : ""}.`;
   return {
     title: sermon.title,
-    description:
-      sermon.description ||
-      `A sermon by Pastor M. Adam Summers${sermon.passage ? ` from ${sermon.passage}` : ""}.`,
+    description,
+    ...canonical(`/sermons/${slug}`),
+    openGraph: { title: sermon.title, description, type: "article" },
   };
 }
 
@@ -44,6 +48,13 @@ export default async function SermonPage({
 
   return (
     <main className="flex-1">
+      <JsonLd data={sermonSchema(sermon)} />
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Sermons", path: "/sermons" },
+          { name: sermon.title, path: `/sermons/${slug}` },
+        ])}
+      />
       <section className="bg-slate-950 text-white">
         <div className="mx-auto max-w-3xl px-4 py-14">
           <Link href="/sermons" className="text-sm text-brand-400 hover:text-brand-500">

@@ -1,9 +1,11 @@
 import type { Metadata, Viewport } from "next";
+import { canonical } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Daily Devotion Journal",
   description:
     "A private place to write down what you read in God's Word each day. Your entries stay on your own device — nobody else can read them.",
+  ...canonical("/journal"),
   appleWebApp: {
     capable: true,
     title: "Devotions",
