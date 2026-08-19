@@ -183,8 +183,20 @@ tick, and sends that one entry and nothing else.
 
 ### How moderation works
 
-Everything shared lands in a queue at **`/admin`** (password in
-`ADMIN_PASSWORD`). Nothing is public until the pastor publishes it.
+Everything shared lands in a queue at **`/admin`**. Nothing is public until
+the pastor publishes it.
+
+**One sign-in covers both jobs.** Signing in to the site editor at
+`/keystatic` with GitHub also opens `/admin` — the middleware checks that
+the GitHub account has write access to the repo and mints an admin session.
+Anyone who can edit the whole website is already trusted to review
+devotions, so a second credential would be theatre. `ADMIN_PASSWORD` still
+works as a way in if GitHub is ever unreachable, and signing out clears
+both sessions.
+
+**Access is granted and revoked in one place:** repo → Settings →
+Collaborators. Remove someone there and they lose the editor and the queue
+together.
 
 - Full text is visible in the queue — no clicking into each one
 - Keyboard: `J`/`K` move, `A` publish, `R` discard, `E` edit, `X` select

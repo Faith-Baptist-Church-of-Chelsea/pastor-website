@@ -22,7 +22,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </span>
           </Link>
           <nav className="flex items-center gap-4 text-sm">
-            <Link href="/devotions" className="text-slate-300 hover:text-white">
+            <a href="/keystatic" className="text-slate-300 hover:text-white">
+              Edit the site
+            </a>
+            <Link href="/devotions" className="hidden text-slate-300 hover:text-white sm:inline">
               View public page
             </Link>
             <form action="/admin/logout" method="post">
