@@ -127,10 +127,10 @@ export async function getAbout() {
 export async function getPhotos() {
   const p = await reader.singletons.photos.read();
   return {
-    hero: p?.hero ?? "/images/pastor-adam-summers.jpg",
-    music: p?.music ?? "/images/adam-and-melody.jpg",
-    family: p?.family ?? "/images/summers-family.jpg",
-    musicHeader: p?.musicHeader ?? "/images/family-music.jpg",
+    hero: p?.hero ?? "/images/hero.jpeg",
+    music: p?.music ?? "/images/music.jpg",
+    family: p?.family ?? "/images/family.jpg",
+    musicHeader: p?.musicHeader ?? "/images/musicHeader.jpg",
     signature: p?.signature ?? "/images/signature.png",
   };
 }

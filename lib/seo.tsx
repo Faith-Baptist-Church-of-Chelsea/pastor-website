@@ -6,6 +6,7 @@
 // is for — and every claim in it has to match what's actually on the page,
 // or it's worse than nothing.
 import site from "@/content/site.json";
+import photos from "@/content/photos.json";
 
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://pastoradamsummers.com";
@@ -31,7 +32,7 @@ export function personSchema() {
     alternateName: "Pastor Adam Summers",
     jobTitle: "Pastor",
     url: SITE_URL,
-    image: abs("/images/pastor-adam-summers.jpg"),
+    image: abs(photos.hero),
     description:
       "Pastor of Faith Baptist Church in Chelsea, Michigan since 2008, preaching expository sermons from the King James Bible.",
     worksFor: { "@id": CHURCH_ID },
