@@ -126,6 +126,7 @@ export function sermonSchema(sermon: {
     headline: sermon.title,
     ...(sermon.description ? { description: sermon.description } : {}),
     datePublished: sermon.date,
+    image: abs("/opengraph-image"),
     author: personSchema(),
     publisher: { "@id": PERSON_ID },
     mainEntityOfPage: abs(`/sermons/${sermon.slug}`),
@@ -148,6 +149,7 @@ export function postSchema(post: {
     ...(post.description ? { description: post.description } : {}),
     datePublished: post.date,
     dateModified: post.date,
+    image: abs("/opengraph-image"),
     author: personSchema(),
     publisher: { "@id": PERSON_ID },
     mainEntityOfPage: abs(`/pastors-desk/${post.slug}`),
@@ -168,6 +170,7 @@ export function devotionSchema(devotion: {
     headline: `${devotion.passage || "A devotion"} — shared by ${devotion.display_name}`,
     description: devotion.reflection.slice(0, 200),
     datePublished: devotion.entry_date,
+    image: abs("/opengraph-image"),
     // Contributors choose how they're named, including "Anonymous", so the
     // author is exactly the label shown on the page and nothing more.
     author: { "@type": "Person", name: devotion.display_name },
