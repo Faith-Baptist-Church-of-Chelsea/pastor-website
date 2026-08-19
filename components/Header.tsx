@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 export type NavLink = { label: string; href: string };
@@ -22,7 +23,7 @@ export default function Header({
   const close = () => setMobileOpen(false);
 
   const linkClass = (href: string) =>
-    `rounded px-3 py-2 text-sm font-medium transition-colors ${
+    `whitespace-nowrap rounded px-2.5 py-2 text-sm font-medium transition-colors ${
       pathname === href ? "text-white" : "text-slate-300 hover:text-white"
     }`;
 
@@ -36,21 +37,33 @@ export default function Header({
           href="/"
           onClick={close}
           aria-label="Pastor Adam Summers — home"
-          className="flex shrink-0 flex-col leading-tight"
+          className="flex shrink-0 items-center gap-3"
         >
-          <span
-            className="text-xl font-bold text-white sm:text-2xl"
-            style={{ fontFamily: "var(--font-display)" }}
-          >
-            Pastor Adam Summers
-          </span>
-          <span className="hidden text-[11px] tracking-wide text-brand-400 sm:block">
-            “For to me to live is Christ, and to die is gain.”
+          {/* The seal's lettering is unreadable at this size, so it works as
+              a mark and the name stays as real text beside it. */}
+          <Image
+            src="/images/logo.png"
+            alt=""
+            width={512}
+            height={512}
+            priority
+            className="h-11 w-11 shrink-0 sm:h-12 sm:w-12"
+          />
+          <span className="hidden flex-col leading-tight sm:flex">
+            <span
+              className="text-lg font-bold text-white sm:text-2xl"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
+              Pastor Adam Summers
+            </span>
+            <span className="hidden text-[11px] tracking-wide text-brand-400 sm:block">
+              “For to me to live is Christ, and to die is gain.”
+            </span>
           </span>
         </Link>
 
         {/* Desktop nav */}
-        <div className="hidden items-center gap-1 lg:flex">
+        <div className="hidden items-center gap-1 xl:flex">
           {links.map((l) => (
             <Link key={l.href} href={l.href} className={linkClass(l.href)}>
               {l.label}
@@ -58,14 +71,14 @@ export default function Header({
           ))}
           <a
             href={subscribeHref}
-            className="ml-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-500"
+            className="ml-2 whitespace-nowrap rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-500"
           >
             Subscribe
           </a>
         </div>
 
         {/* Mobile: subscribe button + hamburger */}
-        <div className="flex items-center gap-2 lg:hidden">
+        <div className="flex items-center gap-2 xl:hidden">
           <a
             href={subscribeHref}
             className="rounded-lg bg-brand-600 px-3 py-2 text-sm font-semibold text-white"
@@ -93,7 +106,7 @@ export default function Header({
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div id="mobile-menu" className="border-t border-slate-800 bg-slate-950 px-4 pb-6 pt-2 lg:hidden">
+        <div id="mobile-menu" className="border-t border-slate-800 bg-slate-950 px-4 pb-6 pt-2 xl:hidden">
           <div className="mt-2 space-y-1">
             {links.map((l) => (
               <Link
