@@ -8,7 +8,7 @@ import { getSermons, reader } from "@/lib/content";
 
 export const dynamic = "force-static";
 
-const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://pastor-website-nine.vercel.app";
+const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://pastoradamsummers.com";
 
 export async function GET() {
   const sermons = (await getSermons()).filter((s) => s.audioFile);

@@ -1,13 +1,13 @@
-// RSS feed for the Pastor's Desk blog (and written devotions), generated
+// RSS feed for the Pastor's Desk blog, generated
 // at build time. The sermon podcast has its own feed at /podcast.xml.
-import { getDevotions, getPosts, reader } from "@/lib/content";
+import { getPosts, reader } from "@/lib/content";
 
 export const dynamic = "force-static";
 
-const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://pastor-website-nine.vercel.app";
+const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://pastoradamsummers.com";
 
 export async function GET() {
-  const [posts, devotions] = await Promise.all([getPosts(), getDevotions()]);
+  const posts = await getPosts();
 
   const postItems = await Promise.all(
     posts.map(async (p) => {
@@ -21,14 +21,8 @@ export async function GET() {
       };
     })
   );
-  const devotionItems = devotions.map((d) => ({
-    title: `Devotion: ${d.title}`,
-    url: `${BASE}/devotions`,
-    date: d.date,
-    summary: "",
-  }));
 
-  const items = [...postItems, ...devotionItems]
+  const items = [...postItems]
     .filter((i) => i.date)
     .sort((a, b) => b.date.localeCompare(a.date))
     .map(

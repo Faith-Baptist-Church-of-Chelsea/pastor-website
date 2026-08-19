@@ -62,7 +62,7 @@ export async function POST(request: Request) {
 }
 
 async function sendWelcome(to: string) {
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://pastor-website-nine.vercel.app";
+  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://pastoradamsummers.com";
   const [site, sermons] = await Promise.all([getSite(), getSermons()]);
   const latest = sermons[0];
   await sendEmail({

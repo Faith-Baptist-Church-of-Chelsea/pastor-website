@@ -1,13 +1,7 @@
 import type { Metadata } from "next";
 import PageHero from "@/components/PageHero";
 import SearchBox, { type SearchEntry } from "@/components/SearchBox";
-import {
-  getDevotions,
-  getMusic,
-  getPostsFull,
-  getSermonsFull,
-  reader,
-} from "@/lib/content";
+import { getMusic, getPostsFull, getSermonsFull, reader } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Search",
@@ -15,10 +9,9 @@ export const metadata: Metadata = {
 };
 
 export default async function SearchPage() {
-  const [sermons, posts, devotions, music] = await Promise.all([
+  const [sermons, posts, music] = await Promise.all([
     getSermonsFull(),
     getPostsFull(),
-    getDevotions(),
     getMusic(),
   ]);
 
@@ -39,18 +32,6 @@ export default async function SearchPage() {
           text: entry ? await entry.body() : "",
           url: `/pastors-desk/${p.slug}`,
           meta: p.date,
-        };
-      })
-    )),
-    ...(await Promise.all(
-      devotions.map(async (d) => {
-        const entry = await reader.collections.devotions.read(d.slug);
-        return {
-          type: "Devotion",
-          title: d.title,
-          text: entry ? await entry.note() : "",
-          url: "/devotions",
-          meta: d.date,
         };
       })
     )),

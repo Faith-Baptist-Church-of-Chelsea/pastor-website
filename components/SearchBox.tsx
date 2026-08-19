@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 
 export type SearchEntry = {
@@ -15,8 +15,35 @@ export type SearchEntry = {
 // page (it's small), so results appear as you type with no server calls.
 export default function SearchBox({ entries }: { entries: SearchEntry[] }) {
   const [query, setQuery] = useState("");
+  const [devotions, setDevotions] = useState<SearchEntry[]>([]);
 
-  const results = useMemo(() => {
+  // Devotions are searched on the server (there can be thousands of them),
+  // debounced, and merged into the same result list.
+  useEffect(() => {
+    const q = query.trim();
+    if (q.length < 2) {
+      setDevotions([]);
+      return;
+    }
+    const controller = new AbortController();
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/search/devotions?q=${encodeURIComponent(q)}`, {
+          signal: controller.signal,
+        });
+        const body = await res.json();
+        setDevotions(body.results ?? []);
+      } catch {
+        // Aborted or offline — the local results still stand.
+      }
+    }, 250);
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [query]);
+
+  const localResults = useMemo(() => {
     const words = query.toLowerCase().split(/\s+/).filter((w) => w.length > 1);
     if (words.length === 0) return [];
     return entries
@@ -37,10 +64,16 @@ export default function SearchBox({ entries }: { entries: SearchEntry[] }) {
       .map((r) => r.e);
   }, [query, entries]);
 
+  // Site content first, then the community devotions.
+  const results = useMemo(
+    () => [...localResults, ...devotions],
+    [localResults, devotions]
+  );
+
   return (
     <div>
       <label htmlFor="site-search" className="sr-only">
-        Search sermons, posts, and music
+        Search sermons, posts, devotions, and music
       </label>
       <input
         id="site-search"

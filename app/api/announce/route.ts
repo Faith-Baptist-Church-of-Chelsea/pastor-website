@@ -1,14 +1,21 @@
-// Daily announcement email (Vercel Cron, see vercel.json).
+// The site's daily jobs (Vercel Cron, see vercel.json). Two independent
+// pieces of work, deliberately on one schedule so the project stays within
+// the Hobby plan's cron allowance:
 //
-// Finds sermons, blog posts, and devotions dated within the last 14 days
-// that haven't been emailed about yet, and sends ONE digest broadcast to
-// the Resend audience. "Already announced" is remembered in the names of
-// past broadcasts (announced[key,key,...]), so no database is needed.
-// Safe to re-run: every run re-reads that history first.
+//   1. Subscriber announcement — sermons and blog posts dated within the
+//      last 14 days that haven't been emailed about yet, as ONE broadcast.
+//      "Already announced" is remembered in the names of past broadcasts
+//      (announced[key,key,...]), so no database is needed.
+//   2. Moderation digest — tells the pastor how many shared devotions are
+//      waiting. Silent on days when the queue is empty.
+//
+// Safe to re-run: both re-read their own state first. Neither can break
+// the other — a failure in one is reported and the other still runs.
 import { NextResponse } from "next/server";
-import { getDevotions, getPosts, getSermons } from "@/lib/content";
+import { getPosts, getSermons } from "@/lib/content";
 import { broadcastNames, resendConfigured, sendBroadcast } from "@/lib/resend";
 import { renderEmail } from "@/lib/email-template";
+import { sendDevotionDigest } from "@/lib/devotion-digest";
 
 export const dynamic = "force-dynamic";
 
@@ -20,20 +27,24 @@ export async function GET(request: Request) {
   if (!process.env.CRON_SECRET || auth !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  if (!resendConfigured()) {
-    return NextResponse.json({ skipped: "Resend not configured" });
-  }
 
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://pastor-website-nine.vercel.app";
+  const [digest, announcement] = await Promise.all([
+    sendDevotionDigest().catch((err) => ({ sent: false, reason: String(err) })),
+    announceNewContent().catch((err) => ({ sent: false, reason: String(err) })),
+  ]);
+  return NextResponse.json({ digest, announcement });
+}
+
+/** Emails subscribers about anything new on the site. */
+async function announceNewContent() {
+  if (!resendConfigured()) return { sent: false, reason: "Resend not configured" };
+
+  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://pastoradamsummers.com";
   const cutoff = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000)
     .toISOString()
     .slice(0, 10);
 
-  const [sermons, posts, devotions] = await Promise.all([
-    getSermons(),
-    getPosts(),
-    getDevotions(),
-  ]);
+  const [sermons, posts] = await Promise.all([getSermons(), getPosts()]);
 
   const recent: Item[] = [
     ...sermons.map((s) => ({
@@ -44,19 +55,15 @@ export async function GET(request: Request) {
       key: `post:${p.slug}`, kind: "From the Pastor's Desk", title: p.title, date: p.date,
       url: `${base}/pastors-desk/${p.slug}`,
     })),
-    ...devotions.map((d) => ({
-      key: `devotion:${d.slug}`, kind: "New devotion", title: d.title, date: d.date,
-      url: `${base}/devotions`,
-    })),
   ].filter((i) => i.date && i.date >= cutoff);
 
-  if (recent.length === 0) return NextResponse.json({ sent: false, reason: "nothing recent" });
+  if (recent.length === 0) return { sent: false, reason: "nothing recent" };
 
   const announced = (await broadcastNames())
     .filter((n) => n.startsWith("announced["))
     .flatMap((n) => n.slice("announced[".length, -1).split(","));
   const fresh = recent.filter((i) => !announced.includes(i.key));
-  if (fresh.length === 0) return NextResponse.json({ sent: false, reason: "all announced" });
+  if (fresh.length === 0) return { sent: false, reason: "all announced" };
 
   const subject =
     fresh.length === 1
@@ -83,5 +90,5 @@ export async function GET(request: Request) {
 
   const name = `announced[${fresh.map((i) => i.key).join(",")}]`;
   const id = await sendBroadcast({ name, subject, html });
-  return NextResponse.json({ sent: true, broadcast: id, items: fresh.map((i) => i.key) });
+  return { sent: true, broadcast: id, items: fresh.map((i) => i.key) };
 }

@@ -109,19 +109,6 @@ export async function getMusic() {
     .sort((a, b) => a.order - b.order);
 }
 
-/** Devotion videos, newest first. */
-export async function getDevotions() {
-  const all = await reader.collections.devotions.all();
-  return all
-    .map(({ slug, entry }) => ({
-      slug,
-      title: entry.title,
-      date: entry.date ?? "",
-      youtube: entry.youtube ?? "",
-    }))
-    .sort((a, b) => b.date.localeCompare(a.date));
-}
-
 /** Site facts (same data as importing content/site.json directly). */
 export async function getSite() {
   const site = await reader.singletons.site.read();

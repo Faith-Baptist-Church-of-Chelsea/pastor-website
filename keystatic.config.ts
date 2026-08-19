@@ -193,25 +193,5 @@ export default config({
       },
     }),
 
-    // Devotion videos → content/devotions/*.mdx
-    devotions: collection({
-      label: "Devotion Videos",
-      path: "content/devotions/*",
-      slugField: "title",
-      format: { contentField: "note" },
-      schema: {
-        title: fields.slug({ name: { label: "Devotion title" } }),
-        date: fields.date({ label: "Date" }),
-        youtube: fields.text({
-          label: "YouTube video ID (optional)",
-          description:
-            "For video devotions: just the ID — the part after \"watch?v=\" in the YouTube link. Leave empty for a written devotion.",
-        }),
-        note: fields.mdx({
-          label: "Devotion text",
-          description: "The devotion itself — a short written thought (or notes to go with the video)",
-        }),
-      },
-    }),
   },
 });

@@ -1,26 +1,23 @@
 import Header, { type NavLink } from "@/components/Header";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
-import { getDevotions, getSite } from "@/lib/content";
+import { getSite } from "@/lib/content";
 
 // Layout for every public-facing page: header + page + footer.
-// The /keystatic admin route sits outside this group so the CMS gets
-// the full screen. Nav is built here (a server component) so pages
-// with no content yet — Devotions — stay hidden until they're needed.
+// The /keystatic and /admin routes sit outside this group so the CMS and
+// the moderation queue get the full screen.
 export default async function SiteLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const [site, devotions] = await Promise.all([getSite(), getDevotions()]);
+  const site = await getSite();
 
   const links: NavLink[] = [
     { label: "Home", href: "/" },
     { label: "About", href: "/about" },
     { label: "Pastor's Desk", href: "/pastors-desk" },
     { label: "Sermons", href: "/sermons" },
+    { label: "Devotions", href: "/devotions" },
     { label: "Family Music", href: "/music" },
-    ...(devotions.length > 0
-      ? [{ label: "Devotions", href: "/devotions" }]
-      : []),
     { label: "Contact", href: "/contact" },
     { label: "Search", href: "/search" },
   ];
