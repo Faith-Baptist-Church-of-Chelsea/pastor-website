@@ -1,7 +1,7 @@
 {
-  "hero": "/images/pastor-adam-summers.jpg",
-  "music": "/images/adam-and-melody.jpg",
-  "family": "/images/summers-family.jpg",
-  "musicHeader": "/images/family-music.jpg",
+  "hero": "/images/hero.jpeg",
+  "music": "/images/music.jpg",
+  "family": "/images/family.jpg",
+  "musicHeader": "/images/musicHeader.jpg",
   "signature": "/images/signature.png"
 }
