@@ -1,0 +1,30 @@
+# Hourly tick for the journal's daily reminders.
+#
+# Vercel's Hobby plan only allows once-a-day cron jobs, but people pick
+# their own reminder time, so the schedule has to be checked every hour.
+# GitHub Actions does that for free. The endpoint itself only sends to
+# people whose chosen hour matches, and never more than once a day.
+#
+# Requires one repository secret: CRON_SECRET (same value as in Vercel).
+name: Journal reminders
+
+on:
+  schedule:
+    - cron: "5 * * * *" # five past every hour, UTC
+  workflow_dispatch: # so it can be run by hand to test
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger reminder dispatch
+        run: |
+          code=$(curl -s -o /tmp/out.json -w '%{http_code}' \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            https://pastoradamsummers.com/api/cron/reminders)
+          cat /tmp/out.json
+          echo
+          if [ "$code" != "200" ]; then
+            echo "Reminder dispatch failed with HTTP $code"
+            exit 1
+          fi

@@ -29,7 +29,8 @@ production — run it before pushing if you've edited code by hand.
 | Sermons | `content/sermons/*.mdx` (one file per sermon) |
 | Blog posts | `content/posts/*.mdx` |
 | Family music | `content/music/*.mdx` |
-| Devotion videos | `content/devotions/*.mdx` |
+| Shared devotions | Neon Postgres (not files) — reviewed at `/admin` |
+| Journal + KJV text | `app/journal/`, `lib/journal/`, `public/kjv/` |
 | Pages (one folder per page) | `app/(site)/` |
 | Images | `public/images/` |
 | Sermon recordings | `public/audio/sermons/` (64 kbps mono MP3 — plenty for preaching) |
@@ -166,6 +167,77 @@ graphics aren't a thing on this site.
   built and then removed by request in July 2026 — the git history has
   them if that ever changes.)
 
+## The devotion journal and devotion blog
+
+Two halves of one feature, added August 2026.
+
+**The journal (`/journal`)** is a private, installable app. Entries live in
+IndexedDB on the writer's own phone — they are never uploaded, and neither
+the church nor the pastor can read them. The whole KJV ships with the app
+(`public/kjv/`, one file per book, ~4 MB) so scripture lookup works with no
+signal. It has reading plans, streaks and a heat map, search, export/import,
+and a standalone single-file copy at `/journal/standalone`.
+
+**The devotion blog (`/devotions`)** is what people choose to share. Sharing
+is only possible from a saved journal entry, requires an explicit consent
+tick, and sends that one entry and nothing else.
+
+### How moderation works
+
+Everything shared lands in a queue at **`/admin`** (password in
+`ADMIN_PASSWORD`). Nothing is public until the pastor publishes it.
+
+- Full text is visible in the queue — no clicking into each one
+- Keyboard: `J`/`K` move, `A` publish, `R` discard, `E` edit, `X` select
+- Bulk publish/discard for whatever is selected
+- Anything the pre-screen flagged (profanity, shouting, possible duplicate)
+  sorts to the top with a marker
+- Links and email addresses are rejected outright at submission
+- **Rejections are silent** — nothing is sent to the contributor, ever
+- `/admin/published` takes anything down in one click
+
+One digest email a day says how many are waiting (`DEVOTION_NOTIFY_EMAIL`).
+Nothing is sent on days when the queue is empty.
+
+### Privacy, and what the server can actually see
+
+| Thing | Where it lives | Who can read it |
+|---|---|---|
+| Journal entries | IndexedDB, on the device | Only the writer |
+| A shared devotion | Postgres | The pastor, then everyone once published |
+| Usage counts | Postgres | Aggregate totals only — a random install ID and a date, nothing else |
+| Synced entries | Postgres, AES-GCM encrypted | **Nobody but the writer.** The key is derived from their passphrase and never leaves the device |
+
+Sync is opt-in and off by default. Because the server genuinely cannot
+decrypt anything, **a forgotten passphrase means the synced copy is gone
+for good** — there is deliberately no reset. The setup screen says so
+plainly and pushes people to save a file copy first.
+
+### Daily reminders
+
+Optional Web Push, off by default, chosen time. Vercel's Hobby plan only
+allows once-a-day crons, but people pick their own hour, so the hourly tick
+comes from GitHub Actions (`.github/workflows/reminders.yml`) hitting
+`/api/cron/reminders`. **That workflow needs one repository secret:
+`CRON_SECRET`, the same value as in Vercel** (repo → Settings → Secrets and
+variables → Actions). On iPhones, reminders only work once the journal has
+been added to the home screen — that's an Apple restriction, and the
+settings screen says so.
+
+### Database
+
+Neon Postgres, provisioned through the Vercel Marketplace (resource
+`neon-claret-compass`, free tier). Schema lives in `db/schema.sql` and is
+applied with:
+
+```bash
+npm run db:migrate
+```
+
+Safe to re-run — everything is `IF NOT EXISTS`. Reads go through the
+`devotions_api` view, which casts dates and ids to plain strings/numbers
+(the driver otherwise hands back JS `Date` objects, which breaks slugs).
+
 ## Deploying
 
 - Repo: github.com/stevenabi6912-prog/pastor-website (private)
@@ -200,6 +272,44 @@ Everything on the old WordPress site was migrated:
 - **All 36 devotion videos on the old site were deleted from YouTube** (they
   404). Nothing to migrate — the Devotions page is ready for new ones.
 - The old site's Facebook link: facebook.com/pastoradamsummers.
+
+## Environment variables
+
+Set in Vercel (Project → Settings → Environment Variables). Everything
+except `ADMIN_PASSWORD` and the GitHub Actions secret is already in place.
+
+| Variable | What it does |
+|---|---|
+| `NEXT_PUBLIC_SITE_URL` | Canonical URL — `https://pastoradamsummers.com`. Feeds share links, the podcast feed, and emails |
+| `DATABASE_URL` / `DATABASE_URL_UNPOOLED` | Neon Postgres (added automatically by the Marketplace integration) |
+| `ADMIN_PASSWORD` | The password for `/admin`. Change it here and it changes everywhere |
+| `DEVOTION_NOTIFY_EMAIL` | Who gets the daily "N waiting for review" email |
+| `RESEND_API_KEY`, `RESEND_AUDIENCE_ID` | Subscriber list and all outgoing email |
+| `CRON_SECRET` | Protects `/api/announce` and `/api/cron/reminders`. Must also be a GitHub Actions repository secret |
+| `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` | Web Push reminders |
+| `JOURNAL_SYNC_SECRET` | Signs sync sessions. Not an encryption key — it cannot decrypt anything |
+| `KEYSTATIC_*` | The `/keystatic` GitHub login |
+
+## DNS
+
+`pastoradamsummers.com` already points at Vercel and serves this site. The
+only DNS work left is for email deliverability — until it's done, mail goes
+out from Resend's shared test sender, which works but is more likely to land
+in spam.
+
+**To send from the real domain:** add the domain in Resend (resend.com →
+Domains), then add the records it gives you at the registrar. They look like:
+
+| Type | Name | Value |
+|---|---|---|
+| TXT | `send` | `v=spf1 include:amazonses.com ~all` |
+| TXT | `resend._domainkey` | (the DKIM key Resend shows you) |
+| MX | `send` | `feedback-smtp.us-east-1.amazonses.com` (priority 10) |
+| TXT | `_dmarc` | `v=DMARC1; p=none;` |
+
+Resend shows the exact values — use theirs, not these, since the DKIM key is
+unique. Once verified, set `RESEND_FROM` to something like
+`Pastor Adam Summers <pastor@pastoradamsummers.com>`.
 
 ## Known notes
 
