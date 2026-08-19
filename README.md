@@ -118,10 +118,9 @@ hood (July 2026 build):
   site deploys → subscribers get the email the next morning. Nothing to
   remember.
 - Env vars: `RESEND_API_KEY` (full access), `RESEND_AUDIENCE_ID`,
-  `CRON_SECRET`, and optionally `RESEND_FROM` (defaults to Resend's shared
-  test sender `onboarding@resend.dev` until pastoradamsummers.com is
-  verified as a sending domain in Resend — do that at cutover so emails
-  land reliably).
+  `CRON_SECRET`, and `RESEND_FROM` (now
+  `Pastor Adam Summers <updates@pastoradamsummers.com>`, since the domain is
+  verified). Replies to any of it go to the address in `content/site.json`.
 - If the Resend vars are missing, the form degrades gracefully to a
   "email the pastor instead" link. The Subscribe header button is still a
   mailto link on purpose (works everywhere, even in RSS readers).
@@ -292,10 +291,12 @@ except `ADMIN_PASSWORD` and the GitHub Actions secret is already in place.
 
 ## DNS
 
-`pastoradamsummers.com` already points at Vercel and serves this site. The
-only DNS work left is for email deliverability — until it's done, mail goes
-out from Resend's shared test sender, which works but is more likely to land
-in spam.
+`pastoradamsummers.com` points at Vercel and serves this site, and the domain
+is **verified in Resend** (August 2026, DNS at Cloudflare) — so email now
+sends from `updates@pastoradamsummers.com` rather than Resend's shared test
+sender. Replies go to the address in `content/site.json`.
+
+Nothing further is required. The records Resend added, for reference:
 
 **To send from the real domain:** add the domain in Resend (resend.com →
 Domains), then add the records it gives you at the registrar. They look like:
@@ -308,8 +309,11 @@ Domains), then add the records it gives you at the registrar. They look like:
 | TXT | `_dmarc` | `v=DMARC1; p=none;` |
 
 Resend shows the exact values — use theirs, not these, since the DKIM key is
-unique. Once verified, set `RESEND_FROM` to something like
-`Pastor Adam Summers <pastor@pastoradamsummers.com>`.
+unique — Resend shows the exact values under Domains.
+
+`RESEND_FROM` is set to `Pastor Adam Summers <updates@pastoradamsummers.com>`.
+That mailbox only sends; nothing receives there, which is why every message
+carries a reply-to pointing at the pastor's real inbox.
 
 ## Known notes
 

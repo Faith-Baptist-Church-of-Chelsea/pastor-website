@@ -2,7 +2,7 @@
 // Spam protection: hidden honeypot field + per-IP rate limit — same
 // approach as the church site's contact form, no CAPTCHA on purpose.
 import { NextResponse } from "next/server";
-import { addContact, resendConfigured, sendEmail } from "@/lib/resend";
+import { addContact, replyToAddress, resendConfigured, sendEmail } from "@/lib/resend";
 import { makeRateLimiter, requestIp } from "@/lib/rate-limit";
 import { getSermons, getSite } from "@/lib/content";
 import { renderEmail } from "@/lib/email-template";
@@ -67,7 +67,7 @@ async function sendWelcome(to: string) {
   const latest = sermons[0];
   await sendEmail({
     to,
-    replyTo: site.email,
+    replyTo: replyToAddress(),
     subject: "You're on the list — updates from Pastor Adam Summers",
     html: renderEmail({
       preheader: "New sermons, blog posts, and music — straight to your inbox.",

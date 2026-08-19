@@ -6,6 +6,7 @@
 // and optionally RESEND_FROM (defaults to Resend's shared test sender until
 // pastoradamsummers.com is verified as a sending domain).
 import "server-only";
+import site from "@/content/site.json";
 
 const API = "https://api.resend.com";
 
@@ -15,6 +16,14 @@ export function resendConfigured(): boolean {
 
 export function fromAddress(): string {
   return process.env.RESEND_FROM ?? "Pastor Adam Summers <onboarding@resend.dev>";
+}
+
+/**
+ * Where replies go. The From address is a send-only mailbox on the domain,
+ * so anyone who hits Reply should land in the pastor's actual inbox.
+ */
+export function replyToAddress(): string {
+  return site.email;
 }
 
 async function resend(path: string, init?: RequestInit) {
@@ -86,6 +95,7 @@ export async function sendBroadcast(opts: {
     body: JSON.stringify({
       audience_id: process.env.RESEND_AUDIENCE_ID,
       from: fromAddress(),
+      reply_to: [replyToAddress()],
       subject: opts.subject,
       html: opts.html,
       name: opts.name,
