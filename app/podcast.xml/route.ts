@@ -5,6 +5,7 @@
 import { statSync } from "node:fs";
 import path from "node:path";
 import { getSermons, reader } from "@/lib/content";
+import site from "@/content/site.json";
 
 export const dynamic = "force-static";
 
@@ -51,6 +52,15 @@ export async function GET() {
     <language>en-us</language>
     <atom:link href="${BASE}/podcast.xml" rel="self" type="application/rss+xml" />
     <itunes:author>Pastor M. Adam Summers</itunes:author>
+    <copyright>© ${new Date().getFullYear()} Pastor M. Adam Summers</copyright>
+    <itunes:type>episodic</itunes:type>
+    <!-- Apple requires an owner email and mails a verification code to it
+         when the feed is submitted. It is public in every podcast feed;
+         this is the same address already published on the contact page. -->
+    <itunes:owner>
+      <itunes:name>Pastor M. Adam Summers</itunes:name>
+      <itunes:email>${site.email}</itunes:email>
+    </itunes:owner>
     <itunes:image href="${BASE}/images/podcast-cover.jpg" />
     <itunes:category text="Religion &amp; Spirituality"><itunes:category text="Christianity" /></itunes:category>
     <itunes:explicit>false</itunes:explicit>
