@@ -19,8 +19,15 @@ export default async function HomePage() {
       <section className="bg-slate-950 text-white">
         <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 sm:py-24 lg:grid-cols-[1fr_360px]">
           <div>
+            {/* The church line was plain text, which is the first place a
+                visitor looks for it — so it's the link. */}
             <p className="animate-rise animate-rise-1 text-sm font-semibold uppercase tracking-widest text-brand-400">
-              {site.church.name} · {site.church.city}
+              <a
+                href={site.church.url ?? "#"}
+                className="underline decoration-brand-400/40 underline-offset-4 transition-colors hover:text-brand-500 hover:decoration-brand-500"
+              >
+                {site.church.name} · {site.church.city}
+              </a>
             </p>
             <h1 className="animate-rise animate-rise-2 mt-4 text-5xl sm:text-6xl">
               Pastor Adam Summers
