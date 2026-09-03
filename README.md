@@ -159,6 +159,12 @@ you know what's in place:
   views canonicalise to themselves so they don't compete as duplicates.
 - **Sitemap** at `/sitemap.xml` with real `lastmod` dates taken from the
   content. Pages with no meaningful date deliberately don't claim one.
+- **Redirects from the old WordPress site** live in `next.config.ts`.
+  The domain ran on WordPress for years, so Google and every old link
+  still point at addresses like `/summers-family-music` and
+  `/musical_specials/…`. They're permanent (308) redirects to the new
+  equivalents. Old blog-post URLs are listed individually on purpose — a
+  wildcard at the root would swallow every future page.
 - **robots.txt** keeps crawlers out of `/admin`, `/keystatic`, `/api/`,
   `/search` (thin, duplicates real content) and the standalone journal
   download.
