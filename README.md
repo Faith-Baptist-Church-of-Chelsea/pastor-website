@@ -244,6 +244,21 @@ together.
 One digest email a day says how many are waiting (`DEVOTION_NOTIFY_EMAIL`).
 Nothing is sent on days when the queue is empty.
 
+> **The digest is switched off (September 2026.)** `DEVOTION_NOTIFY_EMAIL`
+> has been removed from Vercel while the project is paused, so no email
+> reaches the pastor. Everything else still works — people can submit, and
+> submissions still land in `/admin` — he simply isn't told about them.
+>
+> **To switch it back on:** set the variable again and redeploy.
+>
+> ```bash
+> vercel env add DEVOTION_NOTIFY_EMAIL production   # pastorsummers@icloud.com
+> vercel deploy --prod
+> ```
+>
+> Check `/admin` first: the daily email resumes for whatever is already in
+> the queue.
+
 ### Privacy, and what the server can actually see
 
 | Thing | Where it lives | Who can read it |
@@ -328,7 +343,7 @@ except `ADMIN_PASSWORD` and the GitHub Actions secret is already in place.
 | `NEXT_PUBLIC_SITE_URL` | Canonical URL — `https://pastoradamsummers.com`. Feeds share links, the podcast feed, and emails |
 | `DATABASE_URL` / `DATABASE_URL_UNPOOLED` | Neon Postgres (added automatically by the Marketplace integration) |
 | `ADMIN_PASSWORD` | The password for `/admin`. Change it here and it changes everywhere |
-| `DEVOTION_NOTIFY_EMAIL` | Who gets the daily "N waiting for review" email |
+| `DEVOTION_NOTIFY_EMAIL` | Who gets the daily "N waiting for review" email. **Currently unset on purpose** — removing it is the off-switch for that email |
 | `RESEND_API_KEY`, `RESEND_AUDIENCE_ID` | Subscriber list and all outgoing email |
 | `CRON_SECRET` | Protects `/api/announce` and `/api/cron/reminders`. Must also be a GitHub Actions repository secret |
 | `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` | Web Push reminders |
