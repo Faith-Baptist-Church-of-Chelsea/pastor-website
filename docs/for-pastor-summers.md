@@ -100,7 +100,22 @@ reaches you. That's almost always spam.
 
 ---
 
-## 4. Taking something down
+## 4. Changing the website itself
+
+Different page, same sign-in: **pastoradamsummers.com/keystatic**. That is
+where you change the site itself rather than review what others have sent —
+sermons, blog posts, family music, the photos, the About page, your email
+address and the verses in the header. Anything you save there appears on the
+website about a minute later.
+
+To hop between the two, use the **Devotions | Site editor** switch. It sits
+at the top of the review page and floats in the bottom-right corner of the
+editor — same switch, same place, one tap, and you never sign in twice.
+
+A simple way to keep them straight: **the site editor is for your words; the
+review page is for everyone else's.**
+
+## 5. Taking something down
 
 **pastoradamsummers.com/admin/published** lists everything currently public.
 Each one has a **Take down** button. One click and it's off the website
@@ -112,7 +127,7 @@ it in seconds.
 
 ---
 
-## 5. What you can and can't see
+## 6. What you can and can't see
 
 You can see, on your review page, a few plain numbers: how many people wrote
 in their journal this week, how many entries there were, and how many people

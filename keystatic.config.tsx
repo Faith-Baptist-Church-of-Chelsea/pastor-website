@@ -10,6 +10,14 @@
 // (set NEXT_PUBLIC_KEYSTATIC_MODE=github and fill in the repo below).
 import { config, fields, singleton, collection } from "@keystatic/core";
 
+// The seal, shown in the editor's sidebar header. Keystatic offers exactly
+// two ways to make its UI feel like ours — this mark and the sidebar
+// grouping below — so both are used. Its colours and type are its own.
+function BrandMark() {
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img src="/images/logo.png" alt="" width={28} height={28} style={{ display: "block" }} />;
+}
+
 export default config({
   storage:
     process.env.NEXT_PUBLIC_KEYSTATIC_MODE === "github"
@@ -17,7 +25,13 @@ export default config({
       : { kind: "local" },
 
   ui: {
-    brand: { name: "Pastor Adam Summers" },
+    brand: { name: "Pastor Adam Summers", mark: BrandMark },
+    // Sidebar groups, in the order the pastor thinks about them.
+    navigation: {
+      "Preaching & writing": ["sermons", "posts"],
+      "Music & photos": ["music", "photos"],
+      "The site itself": ["site", "about"],
+    },
   },
 
   singletons: {

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import AreaSwitcher from "@/components/admin/AreaSwitcher";
 
 export const metadata: Metadata = {
   title: "Devotions Admin",
@@ -22,9 +23,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </span>
           </Link>
           <nav className="flex items-center gap-4 text-sm">
-            <a href="/keystatic" className="text-slate-300 hover:text-white">
-              Edit the site
-            </a>
+            <AreaSwitcher />
             <Link href="/devotions" className="hidden text-slate-300 hover:text-white sm:inline">
               View public page
             </Link>
