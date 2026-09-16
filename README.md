@@ -85,7 +85,7 @@ Claude Code to do this when ready.
 ## Editing from any browser (how Pastor Summers edits)
 
 Keystatic runs in **GitHub mode**: anyone whose GitHub account has access to
-the `stevenabi6912-prog/pastor-website` repo can open
+the `Faith-Baptist-Church-of-Chelsea/pastor-website` repo can open
 **`<the live site>/keystatic`** in any browser, log in with GitHub, and edit.
 Every save is a git commit to `main`, which redeploys the site automatically.
 
@@ -300,7 +300,7 @@ Safe to re-run — everything is `IF NOT EXISTS`. Reads go through the
 
 ## Deploying
 
-- Repo: github.com/stevenabi6912-prog/pastor-website (private)
+- Repo: github.com/Faith-Baptist-Church-of-Chelsea/pastor-website (public, church organization)
 - Vercel project: `pastor-website` (faith-baptist-church team)
 - Live at: https://pastor-website-nine.vercel.app
 - Every push to `main` deploys automatically (once the Vercel GitHub App has

@@ -13,7 +13,7 @@ import { config, fields, singleton, collection } from "@keystatic/core";
 export default config({
   storage:
     process.env.NEXT_PUBLIC_KEYSTATIC_MODE === "github"
-      ? { kind: "github", repo: "stevenabi6912-prog/pastor-website" }
+      ? { kind: "github", repo: "Faith-Baptist-Church-of-Chelsea/pastor-website" }
       : { kind: "local" },
 
   ui: {

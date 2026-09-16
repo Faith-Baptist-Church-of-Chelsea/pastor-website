@@ -20,7 +20,7 @@ const MAX_AGE_SECONDS = 60 * 60 * 24 * 30; // 30 days
 export const KEYSTATIC_COOKIE = "keystatic-gh-access-token";
 
 /** Repo whose write access grants admin. Matches keystatic.config.ts. */
-export const ADMIN_REPO = "stevenabi6912-prog/pastor-website";
+export const ADMIN_REPO = "Faith-Baptist-Church-of-Chelsea/pastor-website";
 
 function secret(): string {
   return process.env.ADMIN_PASSWORD ?? "";
