@@ -164,3 +164,20 @@ body {
     transform: none;
   }
 }
+
+/*
+ * The site editor (/keystatic) under the shared admin header.
+ *
+ * Keystatic sizes its root to the full window (`.kui-theme > div` is
+ * `height: 100vh`), which would push its bottom edge off-screen once a
+ * header sits above it. Inside this frame it fills the frame instead; the
+ * frame itself is a flex child sized to whatever the header leaves over.
+ * Keystatic's dialogs and menus portal to <body>, so they're unaffected.
+ */
+.site-editor-frame {
+  position: relative;
+}
+.site-editor-frame .kui-theme,
+.site-editor-frame .kui-theme > div {
+  height: 100% !important;
+}

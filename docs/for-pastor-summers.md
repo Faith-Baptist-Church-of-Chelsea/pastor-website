@@ -108,7 +108,9 @@ sermons, blog posts, family music, the photos, the About page, your email
 address and the verses in the header. Anything you save there appears on the
 website about a minute later.
 
-To hop between the two, use the **Devotions | Site editor** switch. It sits
+To hop between the two, use the **Devotions | Site editor** switch at the
+top of either page — same switch, same place, one tap, and you never sign
+in twice.| Site editor** switch. It sits
 at the top of the review page and floats in the bottom-right corner of the
 editor — same switch, same place, one tap, and you never sign in twice.
 

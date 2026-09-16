@@ -1,6 +1,5 @@
-import Link from "next/link";
 import type { Metadata } from "next";
-import AreaSwitcher from "@/components/admin/AreaSwitcher";
+import AdminHeader from "@/components/admin/AdminHeader";
 
 export const metadata: Metadata = {
   title: "Devotions Admin",
@@ -12,29 +11,12 @@ export const metadata: Metadata = {
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col bg-paper">
-      <header className="bg-slate-950 text-white">
-        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-4">
-          <Link href="/admin" className="flex flex-col leading-tight">
-            <span className="text-lg font-bold" style={{ fontFamily: "var(--font-display)" }}>
-              Devotions Admin
-            </span>
-            <span className="text-[11px] tracking-wide text-brand-400">
-              Pastor Adam Summers
-            </span>
-          </Link>
-          <nav className="flex items-center gap-4 text-sm">
-            <AreaSwitcher />
-            <Link href="/devotions" className="hidden text-slate-300 hover:text-white sm:inline">
-              View public page
-            </Link>
-            <form action="/admin/logout" method="post">
-              <button type="submit" className="text-slate-400 hover:text-white">
-                Sign out
-              </button>
-            </form>
-          </nav>
-        </div>
-      </header>
+      <AdminHeader
+        title="Devotions Admin"
+        homeHref="/admin"
+        viewHref="/devotions"
+        viewLabel="View public page"
+      />
       <main className="flex-1">{children}</main>
     </div>
   );

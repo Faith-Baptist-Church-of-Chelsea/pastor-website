@@ -228,7 +228,14 @@ devotions, so a second credential would be theatre. `ADMIN_PASSWORD` still
 works as a way in if GitHub is ever unreachable, and signing out clears
 both sessions.
 
-**Moving between the two:** the same "Devotions | Site editor" switch
+**Moving between the two:** both areas wear the same dark header
+(`components/admin/AdminHeader.tsx`) with the same "Devotions | Site editor"
+switch in the same spot, so it's one tap either way. Keystatic sizes itself
+to the whole window, so the editor page wraps it in `.site-editor-frame`
+(see `globals.css`), which overrides that height so the editor fills the
+space below the header instead of pushing past the bottom of the screen.
+The editor also carries the seal and groups its sidebar — those are the
+only two things Keystatic lets us change about its own look.| Site editor" switch
 appears in the review page's header and floats in the bottom-right corner
 of the editor, so it's one tap either way. (Keystatic pins itself to the
 whole window, which is why the editor's copy floats rather than sitting in

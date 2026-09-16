@@ -1,14 +1,23 @@
 import KeystaticApp from "../keystatic";
-import AreaSwitcher from "@/components/admin/AreaSwitcher";
+import AdminHeader from "@/components/admin/AdminHeader";
 
 // The /keystatic site editor. It renders entirely on the client and sits
-// outside the (site) group so it gets the full screen. The switcher floats
-// over it so getting back to the devotion queue is one tap.
+// outside the (site) group. It wears the same header as the devotion
+// queue, with the editor filling whatever is left of the window below it
+// (see .site-editor-frame in globals.css for how that's arranged).
 export default function Page() {
   return (
-    <>
-      <KeystaticApp />
-      <AreaSwitcher floating />
-    </>
+    <div className="flex h-dvh flex-col overflow-hidden">
+      <AdminHeader
+        title="Site Editor"
+        homeHref="/keystatic"
+        viewHref="/"
+        viewLabel="View site"
+        fullWidth
+      />
+      <div className="site-editor-frame min-h-0 flex-1">
+        <KeystaticApp />
+      </div>
+    </div>
   );
 }
